@@ -2,3 +2,8 @@
 /bin
 /pkg
 
+# Env
+source-env
+
+# Credential
+credential-ilo-airbus
