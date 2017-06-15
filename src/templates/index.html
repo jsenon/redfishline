@@ -59,6 +59,32 @@
 				</br>
 			</div>
 
+			<div class="col-md-8" style="text-align: left;" >
+			<form action="/sendupdate/" method="POST" accept-charset="UTF-8" >
+				<fieldset >
+				<legend>Server API Input</legend>
+					
+					<div class="form-inline">
+						<label class="sr-only">ILO Host</label>
+						<input id="ILO" placeholder="" type="text" name="ILO" class="form-control mb-2 mr-sm-2 mb-sm-0" value="ILOHostname">
+						<label class="sr-only">User</label>
+						<input  id="User" placeholder=""  type="text" name="User" class="form-control mb-2 mr-sm-2 mb-sm-0" value="User">
+						<label class="sr-only" for="inlineFormInput">Password</label>
+						<input id="Password" placeholder="" type="text" name="Password" class="form-control mb-2 mr-sm-2 mb-sm-0" value="Password">
+					</div>
+				</fieldset>
+				</br>
+			</div>
+
+			<div class="col-md-8" style="text-align: left;" >
+				<button class="btn btn-outline-primary" type="submit">Go</button>
+				<button class="btn btn-outline-danger" type="reset">Reset</button>
+				</br>
+				</br>
+			</div>
+			</form>
+
+
 			<footer class="footer">
 	      		<div class="container">
 	        		<span class="text-muted">Made by Somebody.</span>

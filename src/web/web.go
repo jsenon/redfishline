@@ -21,19 +21,12 @@ import (
 )
 
 func Index(res http.ResponseWriter, req *http.Request) {
-
-	rs, err := db.GetInfo()
-
 	t, _ := template.ParseFiles("templates/index.html")
-	t.Execute(res, rs)
-	if err != nil {
-		return
-	}
+	t.Execute(res, req)
 }
 
 func Help(res http.ResponseWriter, req *http.Request) {
 	t, _ := template.ParseFiles("templates/help.html")
-
 	t.Execute(res, req)
 
 }
