@@ -13,6 +13,9 @@
 //     Version: 0.0.1
 //     License: MIT http://opensource.org/licenses/MIT
 //     Contact: Julien SENON <julien.senon@gmail.com>
+
+// Example server https://16.248.65.69/redfish/v1/
+
 package main
 
 import (
@@ -38,6 +41,7 @@ func main() {
 	// Web Part
 	r.HandleFunc("/index", web.Index)
 	r.HandleFunc("/help", web.Help)
+	r.HandleFunc("/debug", web.Debug)
 
 	// Static dir
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("templates/static/"))))
