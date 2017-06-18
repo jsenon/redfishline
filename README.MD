@@ -32,11 +32,12 @@ Auto Health Check API status available at /healthy/am-i-up
 
 ### ToDo
 
-- [ ] Multi Server target selection
-- [ ] Web part to get information details
+- [ ] Add Redfish API Call
+- [x] Multi Server target selection
+- [x] Web part to get information details
 - [ ] API Doc
 - [ ] Build Docker App
 - [x] Add API monitoring
-- [ ] Power Action
+- [x] Power Action
 - [ ] Integration with cloudtab project
 - [ ] Firmware update
