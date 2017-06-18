@@ -103,43 +103,51 @@ func Send(res http.ResponseWriter, req *http.Request) {
 		}
 
 		fmt.Println("Servers", Servers)
+
+		// Loop on Servers
+		for i := range Servers {
+
+			if UEFI == "on" {
+				fmt.Println("------> Launch MASSIVE API UEFI on", Servers[i].ILOHostname)
+
+			}
+			if Legacy == "on" {
+				fmt.Println("------> Launch MASSIVE API Legacy on", Servers[i].ILOHostname)
+			}
+			if Useradd == "on" {
+				fmt.Println("------> Launch MASSIVE API Useradd on", Servers[i].ILOHostname)
+			}
+			if PowerHigh == "on" {
+				fmt.Println("------> Launch MASSIVE API PowerHigh on", Servers[i].ILOHostname)
+			}
+			if FastBoot == "on" {
+				fmt.Println("------> Launch MASSIVE API FastBoot on", Servers[i].ILOHostname)
+			}
+		}
+
+	} else {
+
+		// Call to API ILO x-auth-token
+
+		// Execute Differente API Call for ILO Configuration
 		if UEFI == "on" {
-			fmt.Println("------> Launch MASSIVE API UEFI")
-			// Loop on Servers
+			fmt.Println("------> Launch API UEFI")
 		}
 		if Legacy == "on" {
-			fmt.Println("------> Launch MASSIVE API Legacy")
+			fmt.Println("------> Launch API Legacy")
 		}
 		if Useradd == "on" {
-			fmt.Println("------> Launch MASSIVE API Useradd")
+			fmt.Println("------> Launch API Useradd")
 		}
 		if PowerHigh == "on" {
-			fmt.Println("------> Launch MASSIVE API PowerHigh")
+			fmt.Println("------> Launch API PowerHigh")
 		}
 		if FastBoot == "on" {
-			fmt.Println("------> Launch MASSIVE API FastBoot")
+			fmt.Println("------> Launch API FastBoot")
 		}
 
 	}
 
-	// Call to API ILO x-auth-token
-
-	// Execute Differente API Call for ILO Configuration
-	if UEFI == "on" {
-		fmt.Println("------> Launch API UEFI")
-	}
-	if Legacy == "on" {
-		fmt.Println("------> Launch API Legacy")
-	}
-	if Useradd == "on" {
-		fmt.Println("------> Launch API Useradd")
-	}
-	if PowerHigh == "on" {
-		fmt.Println("------> Launch API PowerHigh")
-	}
-	if FastBoot == "on" {
-		fmt.Println("------> Launch API FastBoot")
-	}
 	// Execute Power Setting action
 
 	// Get Information
