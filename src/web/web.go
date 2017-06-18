@@ -77,6 +77,8 @@ func Send(res http.ResponseWriter, req *http.Request) {
 
 	if JSON != "" {
 		fmt.Println("-> With JSON Struct")
+
+		// Remove old value if single hostname has been used before
 		Server.ILOHostname = ""
 		Server.Username = ""
 		Server.Password = ""
@@ -101,6 +103,22 @@ func Send(res http.ResponseWriter, req *http.Request) {
 		}
 
 		fmt.Println("Servers", Servers)
+		if UEFI == "on" {
+			fmt.Println("------> Launch MASSIVE API UEFI")
+			// Loop on Servers
+		}
+		if Legacy == "on" {
+			fmt.Println("------> Launch MASSIVE API Legacy")
+		}
+		if Useradd == "on" {
+			fmt.Println("------> Launch MASSIVE API Useradd")
+		}
+		if PowerHigh == "on" {
+			fmt.Println("------> Launch MASSIVE API PowerHigh")
+		}
+		if FastBoot == "on" {
+			fmt.Println("------> Launch MASSIVE API FastBoot")
+		}
 
 	}
 
