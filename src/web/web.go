@@ -17,6 +17,7 @@ package web
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/ioutil"
@@ -68,6 +69,40 @@ func Send(res http.ResponseWriter, req *http.Request) {
 	Server.ILOHostname = ILOHostname
 	Server.Username = Username
 	Server.Password = Password
+
+	// Retrieve a JSON Struct with all servers infos
+	// If Json is requested reset value server ILOHostname and use []Servers Definition
+
+	JSON := req.FormValue("JSON")
+
+	if JSON != "" {
+		fmt.Println("-> With JSON Struct")
+		Server.ILOHostname = ""
+		Server.Username = ""
+		Server.Password = ""
+		fmt.Println("ILO", ILOHostname)
+		fmt.Println("JSON", JSON)
+
+		s := []ILODefinition{}
+
+		err := json.Unmarshal([]byte(JSON), &s)
+		if err != nil {
+			fmt.Println("Error: ", err)
+		}
+
+		// Loop on all node in config file json
+		for i := range s {
+			Servers = append(Servers, ILODefinition{
+
+				ILOHostname: s[i].ILOHostname,
+				Username:    s[i].Username,
+				Password:    s[i].Password,
+			})
+		}
+
+		fmt.Println("Servers", Servers)
+
+	}
 
 	// Call to API ILO x-auth-token
 

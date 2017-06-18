@@ -56,5 +56,7 @@ func main() {
 	r.HandleFunc("/healthy/am-i-up", api.Statusamiup).Methods("GET")
 	r.HandleFunc("/healthy/about", api.Statusabout).Methods("GET")
 
+	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("templates/static/"))))
+
 	http.ListenAndServe(":9040", handlers.CORS(originsOk, headersOk, methodsOk)(r))
 }

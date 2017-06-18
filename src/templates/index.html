@@ -6,6 +6,8 @@
 		<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="prism.css" crossorigin="anonymous">
+		<script src="prism.js" crossorigin="anonymous"></script>
 		
 		
 
@@ -66,7 +68,7 @@
 
 					<div class="card">
 						<div class="card-header">
-					    ILO Credential Selection
+					    Single ILO Credential 
 					  	</div>
  						<div class="card-block">
 					
@@ -76,6 +78,8 @@
 								<input  id="User" placeholder=""  type="text" name="Username" class="form-control mb-2 mr-sm-2 mb-sm-0" value="User">
 								<label class="sr-only" for="inlineFormInput">{{.Password}}</label>
 								<input id="Password" placeholder="" type="text" name="Password" class="form-control mb-2 mr-sm-2 mb-sm-0" value="Password">
+								<label class="sr-only">{{.ILOHostname}}</label>
+								<input id="ILO" placeholder="" type="text" name="ILOHostname" class="form-control mb-2 mr-sm-2 mb-sm-0" value={{.ILOHostname}}>
 
 							</div>
 						</div>
@@ -84,13 +88,31 @@
 
 					<div class="card">
 						<div class="card-header">
-					    ILO Servers Hosts
+					    Massive ILO Servers Definition
 					  	</div>
  						<div class="card-block">
-							<div class="form-inline">
-								<label class="sr-only">{{.ILOHostname}}</label>
-								<input id="ILO" placeholder="" type="text" name="ILOHostname" class="form-control mb-2 mr-sm-2 mb-sm-0" value={{.ILOHostname}}>
+							<div class="form-group">
+							    <label for="exampleTextarea">JSON Struct</label>
+							    <textarea class="form-control" id="exampleTextarea" rows="3" name="JSON"></textarea>
 							</div>
+							<pre>
+							<code class="language-json">
+[
+	{
+		"ILOHostname": "MyNode",
+		"Username": "MyUser",
+		"Password": "MyPassword"
+	},
+	{
+		"ILOHostname": "MyNode2",
+		"Username": "MyUser",
+		"Password": "MyPassword"
+	}
+]
+							</code>
+						</pre>
+
+								
 						</div>
 					</div>
 					</br>
