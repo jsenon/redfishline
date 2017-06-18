@@ -23,9 +23,118 @@ import (
 	"net/http"
 )
 
+type ILODefinition struct {
+	// Server ILOHostame
+	ILOHostname string `json:"ILOHostname"`
+	// Server Username
+	Username string `json:"Username"`
+	// Server Password
+	Password string `json:"Password"`
+}
+
+// Multiple Server input
+var Servers []ILODefinition
+
+// Single Server input
+var Server ILODefinition
+
 func Index(res http.ResponseWriter, req *http.Request) {
 	t, _ := template.ParseFiles("templates/index.html")
-	t.Execute(res, req)
+	t.Execute(res, Server)
+}
+
+func Send(res http.ResponseWriter, req *http.Request) {
+	// Retrieve info from form
+	req.ParseForm()
+
+	ILOHostname := req.FormValue("ILOHostname")
+	Username := req.FormValue("Username")
+	Password := req.FormValue("Password")
+	UEFI := req.FormValue("UEFI")
+	Legacy := req.FormValue("Legacy")
+	Useradd := req.FormValue("Useradd")
+	PowerHigh := req.FormValue("PowerHigh")
+	FastBoot := req.FormValue("FastBoot")
+
+	fmt.Println("ILO", ILOHostname)
+	fmt.Println("User", Username)
+	fmt.Println("Password", Password)
+	fmt.Println("Uefi", UEFI)
+	fmt.Println("Legacy", Legacy)
+	fmt.Println("Useradd", Useradd)
+	fmt.Println("PowerHigh", PowerHigh)
+	fmt.Println("FastBoot", FastBoot)
+
+	Server.ILOHostname = ILOHostname
+	Server.Username = Username
+	Server.Password = Password
+
+	// Call to API ILO x-auth-token
+
+	// Execute Differente API Call for ILO Configuration
+	if UEFI == "on" {
+		fmt.Println("------> Launch API UEFI")
+	}
+	if Legacy == "on" {
+		fmt.Println("------> Launch API Legacy")
+	}
+	if Useradd == "on" {
+		fmt.Println("------> Launch API Useradd")
+	}
+	if PowerHigh == "on" {
+		fmt.Println("------> Launch API PowerHigh")
+	}
+	if FastBoot == "on" {
+		fmt.Println("------> Launch API FastBoot")
+	}
+	// Execute Power Setting action
+
+	// Get Information
+	// Check if we launch at each reload or laumch on demand
+	fmt.Println("------> Launch API Information")
+
+	// http redirect to index
+	http.Redirect(res, req, "/index", http.StatusSeeOther)
+}
+
+func Inventory(res http.ResponseWriter, req *http.Request) {
+
+	// Retrieve info from form
+	req.ParseForm()
+
+	ILOHostname := req.FormValue("ILOHostname")
+	Username := req.FormValue("Username")
+	Password := req.FormValue("Password")
+
+	fmt.Println("ILO", ILOHostname)
+	fmt.Println("User", Username)
+	fmt.Println("Password", Password)
+
+	fmt.Println("------> Launch API Inventory")
+
+	http.Redirect(res, req, "/index", http.StatusSeeOther)
+
+}
+
+func Rebootquick(res http.ResponseWriter, req *http.Request) {
+	t, _ := template.ParseFiles("templates/Reboot.html")
+	t.Execute(res, Server)
+	fmt.Println("------> Launch API RebootQuick")
+
+}
+
+func Reboothold(res http.ResponseWriter, req *http.Request) {
+	t, _ := template.ParseFiles("templates/Reboot.html")
+	t.Execute(res, Server)
+	fmt.Println("------> Launch API Reboothold")
+
+}
+
+func Reset(res http.ResponseWriter, req *http.Request) {
+	t, _ := template.ParseFiles("templates/Reboot.html")
+	t.Execute(res, Server)
+	fmt.Println("------> Launch API Reset")
+
 }
 
 func Help(res http.ResponseWriter, req *http.Request) {

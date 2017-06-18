@@ -60,53 +60,75 @@
 			</div>
 
 			<div class="col-md-8" style="text-align: left;" >
-			<form action="/sendupdate/" method="POST" accept-charset="UTF-8" >
+			<form method="POST" accept-charset="UTF-8" >
 				<fieldset >
 				<legend>Server API Input</legend>
+
+					<div class="card">
+						<div class="card-header">
+					    ILO Credential Selection
+					  	</div>
+ 						<div class="card-block">
 					
-					<div class="form-inline">
-						<label class="sr-only">ILO Host</label>
-						<input id="ILO" placeholder="" type="text" name="ILO" class="form-control mb-2 mr-sm-2 mb-sm-0" value="ILOHostname">
-						<label class="sr-only">User</label>
-						<input  id="User" placeholder=""  type="text" name="User" class="form-control mb-2 mr-sm-2 mb-sm-0" value="User">
-						<label class="sr-only" for="inlineFormInput">Password</label>
-						<input id="Password" placeholder="" type="text" name="Password" class="form-control mb-2 mr-sm-2 mb-sm-0" value="Password">
+							<div class="form-inline">
+								
+								<label class="sr-only">{{.Username}}</label>
+								<input  id="User" placeholder=""  type="text" name="Username" class="form-control mb-2 mr-sm-2 mb-sm-0" value="User">
+								<label class="sr-only" for="inlineFormInput">{{.Password}}</label>
+								<input id="Password" placeholder="" type="text" name="Password" class="form-control mb-2 mr-sm-2 mb-sm-0" value="Password">
+
+							</div>
+						</div>
+					</div>
+					</br>
+
+					<div class="card">
+						<div class="card-header">
+					    ILO Servers Hosts
+					  	</div>
+ 						<div class="card-block">
+							<div class="form-inline">
+								<label class="sr-only">{{.ILOHostname}}</label>
+								<input id="ILO" placeholder="" type="text" name="ILOHostname" class="form-control mb-2 mr-sm-2 mb-sm-0" value={{.ILOHostname}}>
+							</div>
+						</div>
 					</div>
 					</br>
 					</br>
 					<div class="card">
 						<div class="card-header">
 					    ILO Configuration Selection
-					  </div>
+					  	</div>
  						<div class="card-block">
 					    	<label class="form-check-label">
-					      	<input type="checkbox" class="form-check-input">
+					      	<input type="checkbox" class="form-check-input" name="UEFI">
 					      	BIOS UEFI
 					    	</label>
 					    	<label class="form-check-label">
-					      	<input type="checkbox" class="form-check-input">
+					      	<input type="checkbox" class="form-check-input" name="Legacy">
 					      	BIOS LEGACY
 					    	</label>
 					    	<label class="form-check-label">
-					      	<input type="checkbox" class="form-check-input">
+					      	<input type="checkbox" class="form-check-input" name="Useradd">
 					      	Add User
 					    	</label>
 					    	<label class="form-check-label">
-					      	<input type="checkbox" class="form-check-input">
+					      	<input type="checkbox" class="form-check-input" name="PowerHigh">
 					      	Power High Performance
 					    	</label>
 					    	<label class="form-check-label">
-					      	<input type="checkbox" class="form-check-input">
+					      	<input type="checkbox" class="form-check-input" name="FastBoot">
 					      	Fast Boot
 					    	</label>
-					    	<p>
-					    		</br>
-					    		<button class="btn btn-outline-primary" type="submit">Go</button>
-								<button class="btn btn-outline-danger" type="reset">Reset</button>
-							<p>
 					    </div>
 					</div>
-					</br>
+					<p>
+			    		</br>
+			    		<button class="btn btn-outline-primary" type="submit" formaction="/send">Go</button>
+						<button class="btn btn-outline-danger" type="reset">Reset</button>
+					<p>
+
+
 					<div class="card">
 						<div class="card-header">
 					    ILO Power Action
@@ -117,9 +139,9 @@
 							    Power Action
 								</button>
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-								    <a class="dropdown-item" href="#">Press Quickly</a>
-								    <a class="dropdown-item" href="#">Press and Hold</a>
-								    <a class="dropdown-item" href="#">Reset </a>
+								    <a class="dropdown-item" href="/rebootquick">Press Quickly</a>
+								    <a class="dropdown-item" href="/reboothold">Press and Hold</a>
+								    <a class="dropdown-item" href="/reset">Reset </a>
 								</div>
 							</div>
 					    </div>
@@ -128,19 +150,27 @@
 				</br>
 			</div>
 
+
+
+
 			<div class="col-md-8" style="text-align: left;" >
+				<p>
+				</br>
+				<button class="btn btn-outline-primary" type="submit" formaction="/inventory">Get Inventory</button>
+				<p>
 				<div class="card">
 					<div class="card-header">
 					    Get Information
 					</div>
  					<div class="card-block">
-						Info Here
+						MyInventory
 					</div>
 				</div>
 			</div>
 			</br>
-			
+
 			</form>
+			
 
 
 			<footer class="footer">

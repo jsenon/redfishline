@@ -40,7 +40,13 @@ func main() {
 
 	// Web Part
 	r.HandleFunc("/index", web.Index)
+	r.HandleFunc("/send", web.Send)
 	r.HandleFunc("/help", web.Help)
+	r.HandleFunc("/inventory", web.Inventory)
+	r.HandleFunc("/rebootquick", web.Rebootquick)
+	r.HandleFunc("/reboothold", web.Reboothold)
+	r.HandleFunc("/reset", web.Reset)
+
 	r.HandleFunc("/debug", web.Debug)
 
 	// Static dir
