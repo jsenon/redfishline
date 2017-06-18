@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+		
+		
+
+		<style>
+			.table td, .table th { 
+				text-align: left; 
+			}
+			body {
+			text-shadow: none;
+			font-size: 10px;
+			}
+
+			.btn {
+				font-size: 10px;
+			}
+			.dropdown-menu{
+			    font-size: 10px;
+
+			}
+			.form-control {
+				font-size: 10px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="container">
+			<ul class="nav">
+				<li class="nav-item">
+					<a class="nav-link active" href="/index">Home</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link disabled"  href="#" target="_blank">Api</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Contact</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link active" href="/help">Help</a>
+				</li>
+			</ul>
+			</br>
+
+			<div class="col-md-6" style="text-align: left;" >
+				<h4>
+					RedFish Line
+				</h4>
+				<tr>
+				</tr>
+				</br>
+			</div>
+
+			<div class="col-md-8" style="text-align: left;" >
+			<form method="POST" accept-charset="UTF-8" >
+				<fieldset >
+				<legend>Server API Input</legend>
+					
+					<div class="form-inline">
+						<label class="sr-only">{{.ILOHostname}}</label>
+						<input id="ILO" placeholder="" type="text" name="ILOHostname" class="form-control mb-2 mr-sm-2 mb-sm-0" value={{.ILOHostname}}>
+						<label class="sr-only">{{.Username}}</label>
+						<input  id="User" placeholder=""  type="text" name="Username" class="form-control mb-2 mr-sm-2 mb-sm-0" value="User">
+						<label class="sr-only" for="inlineFormInput">{{.Password}}</label>
+						<input id="Password" placeholder="" type="text" name="Password" class="form-control mb-2 mr-sm-2 mb-sm-0" value="Password">
+					</div>
+					</br>
+					</br>
+					<div class="card">
+						<div class="card-header">
+					    ILO Power Action
+					  	</div>
+ 						<div class="card-block">
+					    	Reboot in Progress
+					    </div>
+					</div>
+					<p>
+
+
+
+			<footer class="footer">
+	      		<div class="container">
+	        		<span class="text-muted">Made by Somebody.</span>
+	      		</div>
+   			</footer>
+		</div>
+
+	</body>
+</html>
