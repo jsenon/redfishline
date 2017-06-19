@@ -17,6 +17,7 @@ package web
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -204,15 +205,23 @@ func Help(res http.ResponseWriter, req *http.Request) {
 }
 
 func Debug(res http.ResponseWriter, req *http.Request) {
-	url := "https://ilorestfulapiexplorer.ext.hpe.com/redfish/v1/SessionService/Sessions/"
+	url := "https://xxx/redfish/v1/SessionService/Sessions/"
 	fmt.Println("URL:>", url)
 
-	var jsonStr = []byte(`{"Username":"demousername","Password":"edx4qqmgeld7fu"}`)
+	var jsonStr = []byte(`{"UserName":"xx","Password":"xx"}`)
+	fmt.Println("Body:>", jsonStr)
+
+	// Disable self certificate check
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+
 	// req.Header.Set("X-Custom-Header", "")
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{}
+	client := &http.Client{Transport: tr}
 	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
@@ -221,8 +230,27 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 
 	fmt.Println("response Status:", resp.Status)
 	fmt.Println("response Headers:", resp.Header)
-	fmt.Println("ATUH:", resp.Header.Get("x-auth-token"))
+	fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
 	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println("response Body:", string(body))
+
+	// Retrieve x-auth-token
+	token := resp.Header.Get("x-auth-token")
+
+	// New Session
+	url2 := "https://xxx/redfish/v1/Chassis/1/"
+	req2, err := http.NewRequest("GET", url2, nil)
+	req2.Header.Set("X-Auth-Token", token)
+	fmt.Println("URL:>", url2)
+	client2 := &http.Client{Transport: tr}
+	resp2, err2 := client2.Do(req2)
+	if err2 != nil {
+		panic(err2)
+	}
+	defer resp2.Body.Close()
+	fmt.Println("response Status:", resp2.Status)
+	fmt.Println("response Headers:", resp2.Header)
+	body2, _ := ioutil.ReadAll(resp2.Body)
+	fmt.Println("response Body:", string(body2))
 
 }
