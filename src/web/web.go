@@ -85,6 +85,9 @@ func Send(res http.ResponseWriter, req *http.Request) {
 	PowerHigh := req.FormValue("PowerHigh")
 	FastBoot := req.FormValue("FastBoot")
 
+	RebootQuick := req.FormValue("RebootQuick")
+	fmt.Println("Power>", RebootQuick)
+
 	fmt.Println("ILO", ILOHostname)
 	fmt.Println("User", Username)
 	fmt.Println("Password", Password)
@@ -228,6 +231,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 		client := &http.Client{Transport: tr}
 		resp, err := client.Do(req)
 		if err != nil {
+			fmt.Println("Error: ", err)
 			http.Redirect(res, req, "/index", http.StatusSeeOther)
 			return
 		}

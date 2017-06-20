@@ -62,7 +62,7 @@
 			</div>
 
 			<div class="col-md-8" style="text-align: left;" >
-			<form method="POST" accept-charset="UTF-8" >
+			<form method="POST" accept-charset="UTF-8" id="my_form">
 				<fieldset >
 				<legend>Server API Input</legend>
 
@@ -162,9 +162,9 @@
 							    Power Action
 								</button>
 								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-								    <a class="dropdown-item" href="/rebootquick">Press Quickly</a>
-								    <a class="dropdown-item" href="/reboothold">Press and Hold</a>
-								    <a class="dropdown-item" href="/reset">Reset </a>
+								    <button class="dropdown-item" type="submit" formaction="/rebootquick">Press Quickly</button>
+								    <button class="dropdown-item" type="submit" formaction="/reboothold">Press and Hold</button>
+								    <button class="dropdown-item" type="submit" formaction="/reset">Reset </button>
 								</div>
 							</div>
 						</br>
