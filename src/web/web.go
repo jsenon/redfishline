@@ -62,13 +62,13 @@ func Send(res http.ResponseWriter, req *http.Request) {
 
 	ILOHostname := req.FormValue("ILOHostname")
 	// Check if no Host to revent panic
-	if ILOHostname == "" {
-		fmt.Println("Error Hostname")
-		ILOHostname = "127.0.0.1"
-		// http.Error(res, "Error Hostname", 500)
-		http.Redirect(res, req, "/index", http.StatusSeeOther)
-		return
-	}
+	// if ILOHostname == "" {
+	// 	fmt.Println("Error Hostname")
+	// 	ILOHostname = "127.0.0.1"
+	// 	// http.Error(res, "Error Hostname", 500)
+	// 	http.Redirect(res, req, "/index", http.StatusSeeOther)
+	// 	return
+	// }
 	Username := req.FormValue("Username")
 	// Set Default Username if not provideed, prevent panic
 	if Username == "" {
@@ -102,6 +102,12 @@ func Send(res http.ResponseWriter, req *http.Request) {
 	// If Json is requested reset value server ILOHostname and use []Servers Definition
 
 	JSON := req.FormValue("JSON")
+
+	// Error if JSON not exist and Hostname provided
+	if JSON == "" && ILOHostname == "" {
+		http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return
+	}
 
 	if JSON != "" {
 		fmt.Println("-> With JSON Struct")
@@ -155,7 +161,9 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			client := &http.Client{Transport: tr}
 			resp, err := client.Do(req)
 			if err != nil {
-				panic(err)
+				fmt.Println("Error Connection: ", Servers[i].ILOHostname)
+				//http.Redirect(res, req, "/index", http.StatusSeeOther)
+				//return
 			}
 			defer resp.Body.Close()
 
@@ -220,7 +228,8 @@ func Send(res http.ResponseWriter, req *http.Request) {
 		client := &http.Client{Transport: tr}
 		resp, err := client.Do(req)
 		if err != nil {
-			fmt.Println(err)
+			http.Redirect(res, req, "/index", http.StatusSeeOther)
+			return
 		}
 		defer resp.Body.Close()
 
@@ -251,14 +260,16 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			jsonStr2 = []byte(`{"BootMode":"UEFI"}`)
 			req2, err2 = http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
 			if err2 != nil {
-				panic(err2)
+				http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
 			fmt.Println("URL:>", url2)
 			resp2, err2 := client2.Do(req2)
 			if err2 != nil {
-				panic(err2)
+				http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
 			}
 			body2, _ := ioutil.ReadAll(resp2.Body)
 			fmt.Println("response Status:", resp2.Status)
@@ -272,14 +283,16 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			jsonStr2 = []byte(`{"BootMode":"LegacyBios"}`)
 			req2, err2 = http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
 			if err2 != nil {
-				panic(err2)
+				http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
 			fmt.Println("URL:>", url2)
 			resp2, err2 := client2.Do(req2)
 			if err2 != nil {
-				panic(err2)
+				http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
 			}
 			body3, _ := ioutil.ReadAll(resp2.Body)
 			fmt.Println("response Status:", resp2.Status)
@@ -299,14 +312,16 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			jsonStr2 = []byte(`{"PowerProfile":"MaxPerf"}`)
 			req2, err2 = http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
 			if err2 != nil {
-				panic(err2)
+				http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
 			fmt.Println("URL:>", url2)
 			resp2, err2 := client2.Do(req2)
 			if err2 != nil {
-				panic(err2)
+				http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
 			}
 			body4, _ := ioutil.ReadAll(resp2.Body)
 			fmt.Println("response Status:", resp2.Status)
@@ -320,14 +335,16 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			jsonStr2 = []byte(`{"ExtendedMemTest":"Disabled"}`)
 			req2, err2 = http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
 			if err2 != nil {
-				panic(err2)
+				http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
 			fmt.Println("URL:>", url2)
 			resp2, err2 := client2.Do(req2)
 			if err2 != nil {
-				panic(err2)
+				http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
 			}
 			body5, _ := ioutil.ReadAll(resp2.Body)
 			fmt.Println("response Status:", resp2.Status)
