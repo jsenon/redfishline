@@ -13,6 +13,11 @@
 //     License: MIT http://opensource.org/licenses/MIT
 //     Contact: Julien SENON <julien.senon@gmail.com>
 
+//     	"url" => "redfish/v1/Systems/1/Bios/Settings/", PATCH, {"BootMode": "LegacyBios"}
+//		"url" => "redfish/v1/Systems/1/Bios/Settings/", PATCH, {"PowerProfile": "MaxPerf"}
+//		"url" => "redfish/v1/Systems/1/", POST, {"Action": "Reset", "ResetType": "On"}
+// 		"url" => "redfish/v1/Systems/1/", POST, {"Action": "Reset", "ResetType": "ForceRestart"}
+
 package web
 
 import (
@@ -31,6 +36,11 @@ type ILODefinition struct {
 	// Server Username
 	Username string `json:"Username"`
 	// Server Password
+	Password string `json:"Password"`
+}
+
+type Credential struct {
+	UserName string `json:"UserName"`
 	Password string `json:"Password"`
 }
 
@@ -136,6 +146,39 @@ func Send(res http.ResponseWriter, req *http.Request) {
 		}
 		if Legacy == "on" {
 			fmt.Println("------> Launch API Legacy")
+			url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
+			fmt.Println("URL:>", url)
+			jsonStr := Credential{Username, Password}
+			theJson, _ := json.Marshal(jsonStr)
+
+			// var jsonStr = []byte(`{"UserName": Username,"Password": Password}`)
+			fmt.Println("Body:>", jsonStr)
+			// Disable self certificate check
+			tr := &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			}
+
+			req, err := http.NewRequest("POST", url, bytes.NewBuffer(theJson))
+
+			// req.Header.Set("X-Custom-Header", "")
+			req.Header.Set("Content-Type", "application/json")
+
+			client := &http.Client{Transport: tr}
+			resp, err := client.Do(req)
+			if err != nil {
+				panic(err)
+			}
+			defer resp.Body.Close()
+
+			fmt.Println("response Status:", resp.Status)
+			fmt.Println("response Headers:", resp.Header)
+			fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
+			body, _ := ioutil.ReadAll(resp.Body)
+			fmt.Println("response Body:", string(body))
+
+			// Retrieve x-auth-token
+			//token := resp.Header.Get("x-auth-token")
+
 		}
 		if Useradd == "on" {
 			fmt.Println("------> Launch API Useradd")
@@ -205,10 +248,10 @@ func Help(res http.ResponseWriter, req *http.Request) {
 }
 
 func Debug(res http.ResponseWriter, req *http.Request) {
-	url := "https://xxx/redfish/v1/SessionService/Sessions/"
+	url := "https:///redfish/v1/SessionService/Sessions/"
 	fmt.Println("URL:>", url)
 
-	var jsonStr = []byte(`{"UserName":"xx","Password":"xx"}`)
+	var jsonStr = []byte(`{"UserName":"","Password":""}`)
 	fmt.Println("Body:>", jsonStr)
 
 	// Disable self certificate check
@@ -238,7 +281,7 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	token := resp.Header.Get("x-auth-token")
 
 	// New Session
-	url2 := "https://xxx/redfish/v1/Chassis/1/"
+	url2 := "https:///redfish/v1/Chassis/1/"
 	req2, err := http.NewRequest("GET", url2, nil)
 	req2.Header.Set("X-Auth-Token", token)
 	fmt.Println("URL:>", url2)
@@ -252,5 +295,16 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	fmt.Println("response Headers:", resp2.Header)
 	body2, _ := ioutil.ReadAll(resp2.Body)
 	fmt.Println("response Body:", string(body2))
+	var data map[string]interface{}
+	var data2 map[string]map[string]interface{}
+	erro := json.Unmarshal([]byte(body2), &data)
+	if erro != nil {
+		panic(err)
+	}
+	fmt.Println("Model>", data["Model"])
+	erro2 := json.Unmarshal([]byte(body2), &data2)
+	if erro2 != nil {
+	}
+	fmt.Println("Health>", data2["Status"]["Health"])
 
 }
