@@ -180,10 +180,10 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			token := resp.Header.Get("x-auth-token")
 			fmt.Println(token)
 
-			// url2 := "https://" + Servers[i].ILOHostname + "/redfish/v1/Systems/1/Bios/Settings/"
-			// jsonStr2 := []byte(`{"BootMode":""}`)
-			// req2, err2 := http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
-			// client2 := &http.Client{Transport: tr}
+			url2 := "https://" + Servers[i].ILOHostname + "/redfish/v1/Systems/1/Bios/Settings/"
+			jsonStr2 := []byte(`{"BootMode":""}`)
+			req2, err2 := http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
+			client2 := &http.Client{Transport: tr}
 
 			if Legacy == "on" && UEFI == "on" {
 				fmt.Println("Error Legacy and UEFI in the same time")
@@ -191,20 +191,106 @@ func Send(res http.ResponseWriter, req *http.Request) {
 
 			if UEFI == "on" && Legacy == "" {
 				fmt.Println("------> Launch MASSIVE API UEFI on", Servers[i].ILOHostname)
+				// Send BIOS = UEFI
+				jsonStr2 = []byte(`{"BootMode":"UEFI"}`)
+				req2, err2 = http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
+				if err2 != nil {
+					http.Redirect(res, req, "/index", http.StatusSeeOther)
+					return
+				}
+				req2.Header.Set("X-Auth-Token", token)
+				req2.Header.Set("Content-Type", "application/json")
+				fmt.Println("URL:>", url2)
+				resp2, err2 := client2.Do(req2)
+				if err2 != nil {
+					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
+					// http.Redirect(res, req, "/index", http.StatusSeeOther)
+					// return
+				}
+				body2, _ := ioutil.ReadAll(resp2.Body)
+				fmt.Println("response Status:", resp2.Status)
+				fmt.Println("response Headers:", resp2.Header)
+				fmt.Println("response Body:", string(body2))
 
 			}
 			if Legacy == "on" && UEFI == "" {
 				fmt.Println("------> Launch MASSIVE API Legacy on", Servers[i].ILOHostname)
+				// Send BIOS = Legacy
+				jsonStr2 = []byte(`{"BootMode":"LegacyBios"}`)
+				req2, err2 = http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
+				if err2 != nil {
+					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
+					// http.Redirect(res, req, "/index", http.StatusSeeOther)
+					// return
+				}
+				req2.Header.Set("X-Auth-Token", token)
+				req2.Header.Set("Content-Type", "application/json")
+				fmt.Println("URL:>", url2)
+				resp2, err2 := client2.Do(req2)
+				if err2 != nil {
+					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
+					// http.Redirect(res, req, "/index", http.StatusSeeOther)
+					// return
+				}
+				body3, _ := ioutil.ReadAll(resp2.Body)
+				fmt.Println("response Status:", resp2.Status)
+				fmt.Println("response Headers:", resp2.Header)
+				fmt.Println("response Body:", string(body3))
+
 			}
 			if Useradd == "on" {
 				fmt.Println("------> Launch MASSIVE API Useradd on", Servers[i].ILOHostname)
 			}
 			if PowerHigh == "on" {
 				fmt.Println("------> Launch MASSIVE API PowerHigh on", Servers[i].ILOHostname)
+				// Send BIOS = MaxPerf
+				jsonStr2 = []byte(`{"PowerProfile":"MaxPerf"}`)
+				req2, err2 = http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
+				if err2 != nil {
+					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
+					// http.Redirect(res, req, "/index", http.StatusSeeOther)
+					// return
+				}
+				req2.Header.Set("X-Auth-Token", token)
+				req2.Header.Set("Content-Type", "application/json")
+				fmt.Println("URL:>", url2)
+				resp2, err2 := client2.Do(req2)
+				if err2 != nil {
+					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
+					// http.Redirect(res, req, "/index", http.StatusSeeOther)
+					// return
+				}
+				body4, _ := ioutil.ReadAll(resp2.Body)
+				fmt.Println("response Status:", resp2.Status)
+				fmt.Println("response Headers:", resp2.Header)
+				fmt.Println("response Body:", string(body4))
 			}
 			if FastBoot == "on" {
 				fmt.Println("------> Launch MASSIVE API FastBoot on", Servers[i].ILOHostname)
+				fmt.Println("------> Launch API FastBoot")
+				// Send BIOS = Extended Memory Test Off
+				jsonStr2 = []byte(`{"ExtendedMemTest":"Disabled"}`)
+				req2, err2 = http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
+				if err2 != nil {
+					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
+					// http.Redirect(res, req, "/index", http.StatusSeeOther)
+					// return
+				}
+				req2.Header.Set("X-Auth-Token", token)
+				req2.Header.Set("Content-Type", "application/json")
+				fmt.Println("URL:>", url2)
+				resp2, err2 := client2.Do(req2)
+				if err2 != nil {
+					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
+					// http.Redirect(res, req, "/index", http.StatusSeeOther)
+					// return
+				}
+				body5, _ := ioutil.ReadAll(resp2.Body)
+				fmt.Println("response Status:", resp2.Status)
+				fmt.Println("response Headers:", resp2.Header)
+				fmt.Println("response Body:", string(body5))
 			}
+			// Perform A server reset if checked
 		}
 
 	} else {
@@ -355,10 +441,9 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			fmt.Println("response Headers:", resp2.Header)
 			fmt.Println("response Body:", string(body5))
 		}
+		// Perform A server reset if checked
 
 	}
-
-	// Execute Power Setting action
 
 	// Get Information
 	// Check if we launch at each reload or launch on demand
