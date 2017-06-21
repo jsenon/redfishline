@@ -294,7 +294,74 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			// Perform A server reset if checked
 			if AllowReset == "on" {
 				fmt.Println("------> Launch API Apply Setting by reseting server")
-				fmt.Println("------> Launch API Reset check status")
+
+				// We need to check status in order to launch reset
+
+				fmt.Println("------> Launch API Check Power Status")
+
+				url2 := "https://" + Servers[i].ILOHostname + "/redfish/v1/Systems/1/"
+
+				req2, err2 := http.NewRequest("GET", url2, bytes.NewBuffer(jsonStr2))
+				client2 := &http.Client{Transport: tr}
+				req2.Header.Set("X-Auth-Token", token)
+				req2.Header.Set("Content-Type", "application/json")
+				fmt.Println("URL:>", url2)
+				resp2, err2 := client2.Do(req2)
+				if err2 != nil {
+					fmt.Println("Error: ", err)
+					// http.Redirect(res, req, "/index", http.StatusSeeOther)
+					return
+				}
+				body6, _ := ioutil.ReadAll(resp2.Body)
+				fmt.Println("response Status:", resp2.Status)
+				fmt.Println("response Headers:", resp2.Header)
+				fmt.Println("response Body:", string(body6))
+				var data map[string]interface{}
+				json.Unmarshal([]byte(body6), &data)
+				fmt.Println("PowerState:", data["PowerState"])
+				state := data["PowerState"]
+
+				// if off we start system
+				if state == "Off" {
+					jsonStr2 = []byte(`{"Action": "Reset", "ResetType": "On"}`)
+					req2, err2 = http.NewRequest("POST", url2, bytes.NewBuffer(jsonStr2))
+					client2 = &http.Client{Transport: tr}
+					req2.Header.Set("X-Auth-Token", token)
+					req2.Header.Set("Content-Type", "application/json")
+					fmt.Println("URL:>", url2)
+					resp2, err2 = client2.Do(req2)
+					if err2 != nil {
+						fmt.Println("Error: ", err)
+						// http.Redirect(res, req, "/index", http.StatusSeeOther)
+						return
+					}
+					body7, _ := ioutil.ReadAll(resp2.Body)
+					fmt.Println("response Status:", resp2.Status)
+					fmt.Println("response Headers:", resp2.Header)
+					fmt.Println("response Body:", string(body7))
+
+				} else {
+
+					// if on we reset system
+					jsonStr2 = []byte(`{"Action": "Reset", "ResetType": "ForceRestart"}`)
+					req2, err2 = http.NewRequest("POST", url2, bytes.NewBuffer(jsonStr2))
+					client2 = &http.Client{Transport: tr}
+					req2.Header.Set("X-Auth-Token", token)
+					req2.Header.Set("Content-Type", "application/json")
+					fmt.Println("URL:>", url2)
+					resp2, err2 = client2.Do(req2)
+					if err2 != nil {
+						fmt.Println("Error: ", err)
+						// http.Redirect(res, req, "/index", http.StatusSeeOther)
+						return
+					}
+					body8, _ := ioutil.ReadAll(resp2.Body)
+					fmt.Println("response Status:", resp2.Status)
+					fmt.Println("response Headers:", resp2.Header)
+					fmt.Println("response Body:", string(body8))
+
+				}
+
 			}
 		}
 
@@ -449,6 +516,9 @@ func Send(res http.ResponseWriter, req *http.Request) {
 		// Perform A server reset if checked
 		if AllowReset == "on" {
 			fmt.Println("------> Launch API Apply Setting by reseting server")
+
+			// We need to check status in order to launch reset
+
 			fmt.Println("------> Launch API Check Power Status")
 
 			url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
@@ -473,7 +543,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			fmt.Println("PowerState:", data["PowerState"])
 			state := data["PowerState"]
 
-			// if off
+			// if off we start system
 			if state == "Off" {
 				jsonStr2 = []byte(`{"Action": "Reset", "ResetType": "On"}`)
 				req2, err2 = http.NewRequest("POST", url2, bytes.NewBuffer(jsonStr2))
@@ -494,6 +564,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 
 			} else {
 
+				// if on we reset system
 				jsonStr2 = []byte(`{"Action": "Reset", "ResetType": "ForceRestart"}`)
 				req2, err2 = http.NewRequest("POST", url2, bytes.NewBuffer(jsonStr2))
 				client2 = &http.Client{Transport: tr}
@@ -528,6 +599,23 @@ func Send(res http.ResponseWriter, req *http.Request) {
 func Inventory(res http.ResponseWriter, req *http.Request) {
 
 	// Retrieve info from form
+	// http://127.0.0.1/redfish/v1/Systems/1/
+
+	var data map[string]map[string]interface{}
+	var data2 map[string]interface{}
+	var data3 map[string]map[string]map[string]interface{}
+
+	json.Unmarshal([]byte(body), &data)
+	fmt.Println("Memory:", data["Memory"]["TotalSystemMemoryGB"])
+	fmt.Println("CPU:", data["Processors"]["Count"])
+	fmt.Println("CPU:", data["Processors"]["ProcessorFamily"])
+
+	fmt.Println("Model:", data2["Model"])
+	fmt.Println("SerialNumber:", data2["SerialNumber"])
+	fmt.Println("Health:", data["Status"]["Health"])
+
+	fmt.Println("PowerSetting:", data3["Oem"]["Hp"]["PowerRegulatorMode"])
+
 	req.ParseForm()
 
 	ILOHostname := req.FormValue("ILOHostname")
