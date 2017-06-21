@@ -17,18 +17,18 @@
 			}
 			body {
 			text-shadow: none;
-			font-size: 10px;
+			font-size: 12px;
 			}
 
 			.btn {
-				font-size: 10px;
+				font-size: 12px;
 			}
 			.dropdown-menu{
-			    font-size: 10px;
+			    font-size: 12px;
 
 			}
 			.form-control {
-				font-size: 10px;
+				font-size: 12px;
 			}
 		</style>
 	</head>
@@ -61,42 +61,64 @@
 				</br>
 			</div>
 
-			<div class="col-md-8" style="text-align: left;" >
+			<div class="col-md-10" style="text-align: left;" >
 			<form method="POST" accept-charset="UTF-8" id="my_form">
 				<fieldset >
 				<legend>Server API Input</legend>
 
-					<div class="card">
-						<div class="card-header">
-					    Single ILO Credential 
-					  	</div>
- 						<div class="card-block">
-					
-							<div class="form-inline">
-								
-								<label class="sr-only">{{.Username}}</label>
-								<input  id="User" placeholder=""  type="text" name="Username" class="form-control mb-2 mr-sm-2 mb-sm-0" value="User">
-								<label class="sr-only" for="inlineFormInput">{{.Password}}</label>
-								<input id="Password" placeholder="" type="text" name="Password" class="form-control mb-2 mr-sm-2 mb-sm-0" value="Password">
-								<label class="sr-only">{{.ILOHostname}}</label>
-								<input id="ILO" placeholder="" type="text" name="ILOHostname" class="form-control mb-2 mr-sm-2 mb-sm-0" value={{.ILOHostname}}>
+					<div id="accordion" role="tablist" aria-multiselectable="true">
 
+						<div class="card">
+							<div class="card-header" role="tab" id="headingOne">
+								<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+						    	Single ILO Credential </a>
+						  	</div>
+						  	<div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+		 						<div class="card-block">
+							
+									<div class="form-inline">
+
+										<div class="input-group">
+											<label class="sr-only">{{.Username}}</label>
+											<span class="input-group-addon" id="sizing-addon2">User</span>
+											<input id="User" name="Username" value="User" type="text" class="form-control" placeholder="Username" aria-describedby="sizing-addon2">
+										</div>
+										<div class="input-group">
+											<label class="sr-only">{{.Password}}</label>
+											<span class="input-group-addon" id="sizing-addon2">Password</span>
+											<input id="Password" name="Password" value="Password" type="text" class="form-control" placeholder="Password" aria-describedby="sizing-addon2">
+										</div>
+										<div class="input-group">
+											<label class="sr-only">{{.ILOHostname}}</label>
+											<span class="input-group-addon" id="sizing-addon2">Host</span>
+											<input id="ILO" name="ILOHostname"  type="text" class="form-control" placeholder="ILOHostname" aria-describedby="sizing-addon2" value={{.ILOHostname}}>
+										</div>
+										
+									
+
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 					</br>
+					
+					<div id="accordion2" role="tablist" aria-multiselectable="true">
 
-					<div class="card">
-						<div class="card-header">
-					    Massive ILO Servers Definition
-					  	</div>
- 						<div class="card-block">
-							<div class="form-group">
-							    <label for="exampleTextarea">JSON Struct</label>
-							    <textarea class="form-control" id="exampleTextarea" rows="3" name="JSON"></textarea>
-							</div>
-							<pre>
-							<code class="language-json">
+						<div class="card">
+							<div class="card-header" role="tab" id="headingOne2">
+						        <a data-toggle="collapse" data-parent="#accordion2" href="#collapseOne2" aria-expanded="true" aria-controls="collapseOne2">
+								Massive ILO Servers Definition </a>
+						  	</div>
+					  	    <div id="collapseOne2" class="collapse show" role="tabpanel" aria-labelledby="headingOne2">
+
+		 						<div class="card-block">
+									<div class="form-group">
+									    <label for="exampleTextarea">JSON Struct</label>
+									    <textarea class="form-control" id="exampleTextarea" rows="3" name="JSON"></textarea>
+									</div>
+									<pre>
+									<code class="language-json">
 [
 	{
 		"ILOHostname": "MyNode",
@@ -108,41 +130,55 @@
 		"Username": "MyUser",
 		"Password": "MyPassword"
 	}
-]
-							</code>
-						</pre>
+	]
+									</code>
+								</pre>
 
-								
+									
+								</div>
+							</div>
 						</div>
 					</div>
 					</br>
 					</br>
-					<div class="card">
-						<div class="card-header">
-					    ILO Configuration Selection
-					  	</div>
- 						<div class="card-block">
-					    	<label class="form-check-label">
-					      	<input type="checkbox" class="form-check-input" name="UEFI">
-					      	BIOS UEFI
-					    	</label>
-					    	<label class="form-check-label">
-					      	<input type="checkbox" class="form-check-input" name="Legacy">
-					      	BIOS LEGACY
-					    	</label>
-					    	<label class="form-check-label">
-					      	<input type="checkbox" class="form-check-input" name="Useradd">
-					      	Add User
-					    	</label>
-					    	<label class="form-check-label">
-					      	<input type="checkbox" class="form-check-input" name="PowerHigh">
-					      	Power High Performance
-					    	</label>
-					    	<label class="form-check-label">
-					      	<input type="checkbox" class="form-check-input" name="FastBoot">
-					      	Fast Boot
-					    	</label>
-					    </div>
+					<div id="accordion3" role="tablist" aria-multiselectable="true">
+
+						<div class="card">
+							<div class="card-header" role="tab" id="headingOne3">
+						        <a data-toggle="collapse" data-parent="#accordion3" href="#collapseOne3" aria-expanded="true" aria-controls="collapseOne3">
+						    	ILO Configuration Selection</a>
+						  	</div>
+						  	<div id="collapseOne3" class="collapse show" role="tabpanel" aria-labelledby="headingOne3">
+		 						<div class="card-block">
+							    	<label class="form-check-label">
+							      	<input type="checkbox" class="form-check-input" name="UEFI">
+							      	BIOS UEFI
+							    	</label>
+							    	<label class="form-check-label">
+							      	<input type="checkbox" class="form-check-input" name="Legacy">
+							      	BIOS LEGACY
+							    	</label>
+								    </br>
+							    	<label class="form-check-label">
+							      	<input type="checkbox" class="form-check-input" name="Useradd">
+							      	Add User
+							    	</label>
+							    	<label class="form-check-label">
+							      	<input type="checkbox" class="form-check-input" name="PowerHigh">
+							      	Power High Performance
+							    	</label>
+							    	<label class="form-check-label">
+							      	<input type="checkbox" class="form-check-input" name="FastBoot">
+							      	Fast Boot
+							    	</label>
+								    </br>
+							    	<label class="form-check-label">
+							      	<input type="checkbox" class="form-check-input" name="AllowReset">
+							      	Allow Reset Now
+							    	</label>
+							    </div>
+							</div>
+						</div>
 					</div>
 					<p>
 			    		</br>
@@ -150,27 +186,31 @@
 						<button class="btn btn-outline-danger" type="reset">Reset</button>
 					<p>
 
+					<div id="accordion4" role="tablist" aria-multiselectable="true">
 
-					<div class="card">
-						<div class="card-header">
-					    ILO Power Action
-					  </div>
- 						<div class="card-block">
- 							
-					    	<div class="dropdown">
-								<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							    Power Action
-								</button>
-								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-								    <button class="dropdown-item" type="submit" formaction="/rebootquick">Press Quickly</button>
-								    <button class="dropdown-item" type="submit" formaction="/reboothold">Press and Hold</button>
-								    <button class="dropdown-item" type="submit" formaction="/reset">Reset </button>
+						<div class="card">
+							<div class="card-header" role="tab" id="headingOne4">
+						        <a data-toggle="collapse" data-parent="#accordion4" href="#collapseOne4" aria-expanded="true" aria-controls="collapseOne4">ILO Power Action</a>
+						  	</div>
+						  	<div id="collapseOne4" class="collapse show" role="tabpanel" aria-labelledby="headingOne4">
+		 						<div class="card-block">
+		 							
+							    	<div class="dropdown">
+										<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    Power Action
+										</button>
+										<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										    <button class="dropdown-item" type="submit" formaction="/rebootquick">Press Quickly</button>
+										    <button class="dropdown-item" type="submit" formaction="/reboothold">Press and Hold</button>
+										    <button class="dropdown-item" type="submit" formaction="/reset">Reset </button>
+										</div>
+									</div>
+									</br>
+									Info : Power Action don't use Massive ILO Servers Definition.
+			 						Declare input in Single ILO Credential.
 								</div>
-							</div>
-						</br>
-						Info : Power Action don't use Massive ILO Servers Definition.
- 						Declare input in Single ILO Credential.</br></br>
-					    </div>
+						    </div>
+						</div>
 					</div>
 				</fieldset>
 			</div>
@@ -178,17 +218,22 @@
 
 
 
-			<div class="col-md-8" style="text-align: left;" >
+			<div class="col-md-10" style="text-align: left;">
 				<p>
 				</br>
 				<button class="btn btn-outline-primary" type="submit" formaction="/inventory">Get Inventory</button>
 				<p>
-				<div class="card">
-					<div class="card-header">
-					    Get Information
-					</div>
- 					<div class="card-block">
-						MyInventory
+				<div id="accordion5" role="tablist" aria-multiselectable="true">
+
+					<div class="card">
+						<div class="card-header" role="tab" id="headingOne5">
+					        <a data-toggle="collapse" data-parent="#accordion5" href="#collapseOne5" aria-expanded="true" aria-controls="collapseOne4">Get Information</a>
+						</div>
+						<div id="collapseOne5" class="collapse show" role="tabpanel" aria-labelledby="headingOne5">
+		 					<div class="card-block">
+								MyInventory
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

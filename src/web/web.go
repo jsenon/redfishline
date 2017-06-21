@@ -17,6 +17,8 @@
 //		"url" => "redfish/v1/Systems/1/Bios/Settings/", PATCH, {"PowerProfile": "MaxPerf"}
 //		"url" => "redfish/v1/Systems/1/", POST, {"Action": "Reset", "ResetType": "On"}
 // 		"url" => "redfish/v1/Systems/1/", POST, {"Action": "Reset", "ResetType": "ForceRestart"}
+// 		"url" => "redfish/v1/Systems/1/", POST, {"Action": "PowerButton", "PushType": "Press", "Target": "/Oem/Hp"}
+// 		"url" => "redfish/v1/Systems/1/", POST, {"Action": "PowerButton", "PushType": "PressAndHold", "Target": "/Oem/Hp"}
 
 package web
 
@@ -477,7 +479,6 @@ func Rebootquick(res http.ResponseWriter, req *http.Request) {
 	t, _ := template.ParseFiles("templates/Reboot.html")
 	t.Execute(res, Server)
 	fmt.Println("------> Launch API RebootQuick")
-	req.ParseForm()
 
 	ILOHostname := req.FormValue("ILOHostname")
 	Username := req.FormValue("Username")
@@ -487,19 +488,203 @@ func Rebootquick(res http.ResponseWriter, req *http.Request) {
 	fmt.Println("User", Username)
 	fmt.Println("Password", Password)
 
+	// Call to API ILO x-auth-token
+
+	url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
+	fmt.Println("URL:>", url)
+	// Retrieve X-Auth-Token
+	// Create my Body
+	jsonStr := Credential{Username, Password}
+	theJson, _ := json.Marshal(jsonStr)
+	fmt.Println("Body:>", jsonStr)
+
+	// Disable self certificate check
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(theJson))
+	// req.Header.Set("X-Custom-Header", "")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{Transport: tr}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error: ", err)
+		// http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("response Status:", resp.Status)
+	fmt.Println("response Headers:", resp.Header)
+	fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
+
+	// Retrieve x-auth-token
+	token := resp.Header.Get("x-auth-token")
+
+	url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
+	jsonStr2 := []byte(`{"Action": "PowerButton", "PushType": "Press", "Target": "/Oem/Hp"}`)
+	req2, err2 := http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
+	client2 := &http.Client{Transport: tr}
+	req2.Header.Set("X-Auth-Token", token)
+	req2.Header.Set("Content-Type", "application/json")
+	fmt.Println("URL:>", url2)
+	resp2, err2 := client2.Do(req2)
+	if err2 != nil {
+		fmt.Println("Error: ", err)
+		// http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return
+	}
+	body2, _ := ioutil.ReadAll(resp2.Body)
+	fmt.Println("response Status:", resp2.Status)
+	fmt.Println("response Headers:", resp2.Header)
+	fmt.Println("response Body:", string(body2))
+
 }
 
 func Reboothold(res http.ResponseWriter, req *http.Request) {
+	req.ParseForm()
+
 	t, _ := template.ParseFiles("templates/Reboot.html")
 	t.Execute(res, Server)
 	fmt.Println("------> Launch API Reboothold")
 
+	ILOHostname := req.FormValue("ILOHostname")
+	Username := req.FormValue("Username")
+	Password := req.FormValue("Password")
+
+	fmt.Println("ILO", ILOHostname)
+	fmt.Println("User", Username)
+	fmt.Println("Password", Password)
+
+	// Call to API ILO x-auth-token
+
+	url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
+	fmt.Println("URL:>", url)
+	// Retrieve X-Auth-Token
+	// Create my Body
+	jsonStr := Credential{Username, Password}
+	theJson, _ := json.Marshal(jsonStr)
+	fmt.Println("Body:>", jsonStr)
+
+	// Disable self certificate check
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(theJson))
+	// req.Header.Set("X-Custom-Header", "")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{Transport: tr}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error: ", err)
+		// http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("response Status:", resp.Status)
+	fmt.Println("response Headers:", resp.Header)
+	fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
+
+	// Retrieve x-auth-token
+	token := resp.Header.Get("x-auth-token")
+
+	url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
+	jsonStr2 := []byte(`{"Action": "PowerButton", "PushType": "PressAndHold", "Target": "/Oem/Hp"}`)
+	req2, err2 := http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
+	client2 := &http.Client{Transport: tr}
+	req2.Header.Set("X-Auth-Token", token)
+	req2.Header.Set("Content-Type", "application/json")
+	fmt.Println("URL:>", url2)
+	resp2, err2 := client2.Do(req2)
+	if err2 != nil {
+		fmt.Println("Error: ", err)
+		// http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return
+	}
+	body2, _ := ioutil.ReadAll(resp2.Body)
+	fmt.Println("response Status:", resp2.Status)
+	fmt.Println("response Headers:", resp2.Header)
+	fmt.Println("response Body:", string(body2))
+
 }
 
 func Reset(res http.ResponseWriter, req *http.Request) {
+	req.ParseForm()
+
 	t, _ := template.ParseFiles("templates/Reboot.html")
 	t.Execute(res, Server)
 	fmt.Println("------> Launch API Reset")
+	ILOHostname := req.FormValue("ILOHostname")
+	Username := req.FormValue("Username")
+	Password := req.FormValue("Password")
+
+	fmt.Println("ILO", ILOHostname)
+	fmt.Println("User", Username)
+	fmt.Println("Password", Password)
+
+	// Call to API ILO x-auth-token
+
+	url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
+	fmt.Println("URL:>", url)
+	// Retrieve X-Auth-Token
+	// Create my Body
+	jsonStr := Credential{Username, Password}
+	theJson, _ := json.Marshal(jsonStr)
+	fmt.Println("Body:>", jsonStr)
+
+	// Disable self certificate check
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(theJson))
+	// req.Header.Set("X-Custom-Header", "")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{Transport: tr}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error: ", err)
+		// http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("response Status:", resp.Status)
+	fmt.Println("response Headers:", resp.Header)
+	fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
+
+	// Retrieve x-auth-token
+	token := resp.Header.Get("x-auth-token")
+
+	url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
+	jsonStr2 := []byte(`{"Action": "Reset", "ResetType": "ForceRestart"}`)
+	req2, err2 := http.NewRequest("PATCH", url2, bytes.NewBuffer(jsonStr2))
+	client2 := &http.Client{Transport: tr}
+	req2.Header.Set("X-Auth-Token", token)
+	req2.Header.Set("Content-Type", "application/json")
+	fmt.Println("URL:>", url2)
+	resp2, err2 := client2.Do(req2)
+	if err2 != nil {
+		fmt.Println("Error: ", err)
+		// http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return
+	}
+	body2, _ := ioutil.ReadAll(resp2.Body)
+	fmt.Println("response Status:", resp2.Status)
+	fmt.Println("response Headers:", resp2.Header)
+	fmt.Println("response Body:", string(body2))
 
 }
 
