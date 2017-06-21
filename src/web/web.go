@@ -86,9 +86,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 	Useradd := req.FormValue("Useradd")
 	PowerHigh := req.FormValue("PowerHigh")
 	FastBoot := req.FormValue("FastBoot")
-
-	RebootQuick := req.FormValue("RebootQuick")
-	fmt.Println("Power>", RebootQuick)
+	AllowReset := req.FormValue("AllowReset")
 
 	fmt.Println("ILO", ILOHostname)
 	fmt.Println("User", Username)
@@ -98,6 +96,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 	fmt.Println("Useradd", Useradd)
 	fmt.Println("PowerHigh", PowerHigh)
 	fmt.Println("FastBoot", FastBoot)
+	fmt.Println("AllowReset", AllowReset)
 
 	Server.ILOHostname = ILOHostname
 	Server.Username = Username
@@ -293,6 +292,10 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				fmt.Println("response Body:", string(body5))
 			}
 			// Perform A server reset if checked
+			if AllowReset == "on" {
+				fmt.Println("------> Launch API Apply Setting by reseting server")
+				fmt.Println("------> Launch API Reset check status")
+			}
 		}
 
 	} else {
@@ -444,6 +447,73 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			fmt.Println("response Body:", string(body5))
 		}
 		// Perform A server reset if checked
+		if AllowReset == "on" {
+			fmt.Println("------> Launch API Apply Setting by reseting server")
+			fmt.Println("------> Launch API Check Power Status")
+
+			url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
+
+			req2, err2 := http.NewRequest("GET", url2, bytes.NewBuffer(jsonStr2))
+			client2 := &http.Client{Transport: tr}
+			req2.Header.Set("X-Auth-Token", token)
+			req2.Header.Set("Content-Type", "application/json")
+			fmt.Println("URL:>", url2)
+			resp2, err2 := client2.Do(req2)
+			if err2 != nil {
+				fmt.Println("Error: ", err)
+				// http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
+			}
+			body6, _ := ioutil.ReadAll(resp2.Body)
+			fmt.Println("response Status:", resp2.Status)
+			fmt.Println("response Headers:", resp2.Header)
+			fmt.Println("response Body:", string(body6))
+			var data map[string]interface{}
+			json.Unmarshal([]byte(body6), &data)
+			fmt.Println("PowerState:", data["PowerState"])
+			state := data["PowerState"]
+
+			// if off
+			if state == "Off" {
+				jsonStr2 = []byte(`{"Action": "Reset", "ResetType": "On"}`)
+				req2, err2 = http.NewRequest("POST", url2, bytes.NewBuffer(jsonStr2))
+				client2 = &http.Client{Transport: tr}
+				req2.Header.Set("X-Auth-Token", token)
+				req2.Header.Set("Content-Type", "application/json")
+				fmt.Println("URL:>", url2)
+				resp2, err2 = client2.Do(req2)
+				if err2 != nil {
+					fmt.Println("Error: ", err)
+					// http.Redirect(res, req, "/index", http.StatusSeeOther)
+					return
+				}
+				body7, _ := ioutil.ReadAll(resp2.Body)
+				fmt.Println("response Status:", resp2.Status)
+				fmt.Println("response Headers:", resp2.Header)
+				fmt.Println("response Body:", string(body7))
+
+			} else {
+
+				jsonStr2 = []byte(`{"Action": "Reset", "ResetType": "ForceRestart"}`)
+				req2, err2 = http.NewRequest("POST", url2, bytes.NewBuffer(jsonStr2))
+				client2 = &http.Client{Transport: tr}
+				req2.Header.Set("X-Auth-Token", token)
+				req2.Header.Set("Content-Type", "application/json")
+				fmt.Println("URL:>", url2)
+				resp2, err2 = client2.Do(req2)
+				if err2 != nil {
+					fmt.Println("Error: ", err)
+					// http.Redirect(res, req, "/index", http.StatusSeeOther)
+					return
+				}
+				body8, _ := ioutil.ReadAll(resp2.Body)
+				fmt.Println("response Status:", resp2.Status)
+				fmt.Println("response Headers:", resp2.Header)
+				fmt.Println("response Body:", string(body8))
+
+			}
+
+		}
 
 	}
 
