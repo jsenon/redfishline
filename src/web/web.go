@@ -47,7 +47,7 @@ type Credential struct {
 }
 
 type InventoryServer struct {
-	Name         string  `json:"Name"`
+	Hostname     string  `json:"Hostname"`
 	Memory       float64 `json:"Memory"`
 	CPUNum       float64 `json:"CPUNum"`
 	CPUModel     string  `json:"CPUModel"`
@@ -99,16 +99,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 	FastBoot := req.FormValue("FastBoot")
 	AllowReset := req.FormValue("AllowReset")
 
-	fmt.Println("ILO", ILOHostname)
-	fmt.Println("User", Username)
-	fmt.Println("Password", Password)
-	fmt.Println("Uefi", UEFI)
-	fmt.Println("Legacy", Legacy)
-	fmt.Println("Useradd", Useradd)
-	fmt.Println("PowerHigh", PowerHigh)
-	fmt.Println("FastBoot", FastBoot)
-	fmt.Println("AllowReset", AllowReset)
-
 	Server.ILOHostname = ILOHostname
 	Server.Username = Username
 	Server.Password = Password
@@ -131,8 +121,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 		Server.ILOHostname = ""
 		Server.Username = ""
 		Server.Password = ""
-		fmt.Println("ILO", ILOHostname)
-		fmt.Println("JSON", JSON)
 
 		s := []ILODefinition{}
 
@@ -151,18 +139,14 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			})
 		}
 
-		fmt.Println("Servers", Servers)
-
 		// Loop on Servers
 		for i := range Servers {
 
 			url := "https://" + Servers[i].ILOHostname + "/redfish/v1/SessionService/Sessions/"
-			fmt.Println("URL:>", url)
 			// Retrieve X-Auth-Token
 			// Create my Body
 			jsonStr := Credential{Servers[i].Username, Servers[i].Password}
 			theJson, _ := json.Marshal(jsonStr)
-			fmt.Println("Body:>", jsonStr)
 
 			// Disable self certificate check
 			tr := &http.Transport{
@@ -182,15 +166,10 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 			defer resp.Body.Close()
 
-			fmt.Println("response Status:", resp.Status)
-			fmt.Println("response Headers:", resp.Header)
-			fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
 			body, _ := ioutil.ReadAll(resp.Body)
-			fmt.Println("response Body:", string(body))
 
 			// Retrieve x-auth-token
 			token := resp.Header.Get("x-auth-token")
-			fmt.Println(token)
 
 			url2 := "https://" + Servers[i].ILOHostname + "/redfish/v1/Systems/1/Bios/Settings/"
 			jsonStr2 := []byte(`{"BootMode":""}`)
@@ -212,7 +191,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				}
 				req2.Header.Set("X-Auth-Token", token)
 				req2.Header.Set("Content-Type", "application/json")
-				fmt.Println("URL:>", url2)
 				resp2, err2 := client2.Do(req2)
 				if err2 != nil {
 					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
@@ -220,9 +198,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 					// return
 				}
 				body2, _ := ioutil.ReadAll(resp2.Body)
-				fmt.Println("response Status:", resp2.Status)
-				fmt.Println("response Headers:", resp2.Header)
-				fmt.Println("response Body:", string(body2))
 
 			}
 			if Legacy == "on" && UEFI == "" {
@@ -237,7 +212,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				}
 				req2.Header.Set("X-Auth-Token", token)
 				req2.Header.Set("Content-Type", "application/json")
-				fmt.Println("URL:>", url2)
 				resp2, err2 := client2.Do(req2)
 				if err2 != nil {
 					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
@@ -245,9 +219,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 					// return
 				}
 				body3, _ := ioutil.ReadAll(resp2.Body)
-				fmt.Println("response Status:", resp2.Status)
-				fmt.Println("response Headers:", resp2.Header)
-				fmt.Println("response Body:", string(body3))
 
 			}
 			if Useradd == "on" {
@@ -265,7 +236,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				}
 				req2.Header.Set("X-Auth-Token", token)
 				req2.Header.Set("Content-Type", "application/json")
-				fmt.Println("URL:>", url2)
+
 				resp2, err2 := client2.Do(req2)
 				if err2 != nil {
 					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
@@ -273,9 +244,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 					// return
 				}
 				body4, _ := ioutil.ReadAll(resp2.Body)
-				fmt.Println("response Status:", resp2.Status)
-				fmt.Println("response Headers:", resp2.Header)
-				fmt.Println("response Body:", string(body4))
+
 			}
 			if FastBoot == "on" {
 				fmt.Println("------> Launch MASSIVE API FastBoot on", Servers[i].ILOHostname)
@@ -290,7 +259,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				}
 				req2.Header.Set("X-Auth-Token", token)
 				req2.Header.Set("Content-Type", "application/json")
-				fmt.Println("URL:>", url2)
 				resp2, err2 := client2.Do(req2)
 				if err2 != nil {
 					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
@@ -298,9 +266,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 					// return
 				}
 				body5, _ := ioutil.ReadAll(resp2.Body)
-				fmt.Println("response Status:", resp2.Status)
-				fmt.Println("response Headers:", resp2.Header)
-				fmt.Println("response Body:", string(body5))
+
 			}
 			// Perform A server reset if checked
 			if AllowReset == "on" {
@@ -316,7 +282,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				client2 := &http.Client{Transport: tr}
 				req2.Header.Set("X-Auth-Token", token)
 				req2.Header.Set("Content-Type", "application/json")
-				fmt.Println("URL:>", url2)
 				resp2, err2 := client2.Do(req2)
 				if err2 != nil {
 					fmt.Println("Error: ", err)
@@ -324,12 +289,9 @@ func Send(res http.ResponseWriter, req *http.Request) {
 					return
 				}
 				body6, _ := ioutil.ReadAll(resp2.Body)
-				fmt.Println("response Status:", resp2.Status)
-				fmt.Println("response Headers:", resp2.Header)
-				fmt.Println("response Body:", string(body6))
+
 				var data map[string]interface{}
 				json.Unmarshal([]byte(body6), &data)
-				fmt.Println("PowerState:", data["PowerState"])
 				state := data["PowerState"]
 
 				// if off we start system
@@ -339,7 +301,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 					client2 = &http.Client{Transport: tr}
 					req2.Header.Set("X-Auth-Token", token)
 					req2.Header.Set("Content-Type", "application/json")
-					fmt.Println("URL:>", url2)
 					resp2, err2 = client2.Do(req2)
 					if err2 != nil {
 						fmt.Println("Error: ", err)
@@ -347,9 +308,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 						return
 					}
 					body7, _ := ioutil.ReadAll(resp2.Body)
-					fmt.Println("response Status:", resp2.Status)
-					fmt.Println("response Headers:", resp2.Header)
-					fmt.Println("response Body:", string(body7))
 
 				} else {
 
@@ -359,7 +317,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 					client2 = &http.Client{Transport: tr}
 					req2.Header.Set("X-Auth-Token", token)
 					req2.Header.Set("Content-Type", "application/json")
-					fmt.Println("URL:>", url2)
 					resp2, err2 = client2.Do(req2)
 					if err2 != nil {
 						fmt.Println("Error: ", err)
@@ -367,9 +324,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 						return
 					}
 					body8, _ := ioutil.ReadAll(resp2.Body)
-					fmt.Println("response Status:", resp2.Status)
-					fmt.Println("response Headers:", resp2.Header)
-					fmt.Println("response Body:", string(body8))
 
 				}
 
@@ -381,12 +335,10 @@ func Send(res http.ResponseWriter, req *http.Request) {
 		// Call to API ILO x-auth-token
 
 		url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
-		fmt.Println("URL:>", url)
 		// Retrieve X-Auth-Token
 		// Create my Body
 		jsonStr := Credential{Username, Password}
 		theJson, _ := json.Marshal(jsonStr)
-		fmt.Println("Body:>", jsonStr)
 
 		// Disable self certificate check
 		tr := &http.Transport{
@@ -406,11 +358,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 		}
 		defer resp.Body.Close()
 
-		fmt.Println("response Status:", resp.Status)
-		fmt.Println("response Headers:", resp.Header)
-		fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
 		body, _ := ioutil.ReadAll(resp.Body)
-		fmt.Println("response Body:", string(body))
 
 		// Retrieve x-auth-token
 		token := resp.Header.Get("x-auth-token")
@@ -438,16 +386,13 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
-			fmt.Println("URL:>", url2)
 			resp2, err2 := client2.Do(req2)
 			if err2 != nil {
 				http.Redirect(res, req, "/index", http.StatusSeeOther)
 				return
 			}
 			body2, _ := ioutil.ReadAll(resp2.Body)
-			fmt.Println("response Status:", resp2.Status)
-			fmt.Println("response Headers:", resp2.Header)
-			fmt.Println("response Body:", string(body2))
+
 		}
 		if Legacy == "on" && UEFI == "" {
 			fmt.Println("------> Launch API Legacy")
@@ -461,16 +406,12 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
-			fmt.Println("URL:>", url2)
 			resp2, err2 := client2.Do(req2)
 			if err2 != nil {
 				http.Redirect(res, req, "/index", http.StatusSeeOther)
 				return
 			}
 			body3, _ := ioutil.ReadAll(resp2.Body)
-			fmt.Println("response Status:", resp2.Status)
-			fmt.Println("response Headers:", resp2.Header)
-			fmt.Println("response Body:", string(body3))
 
 		}
 
@@ -490,16 +431,12 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
-			fmt.Println("URL:>", url2)
 			resp2, err2 := client2.Do(req2)
 			if err2 != nil {
 				http.Redirect(res, req, "/index", http.StatusSeeOther)
 				return
 			}
 			body4, _ := ioutil.ReadAll(resp2.Body)
-			fmt.Println("response Status:", resp2.Status)
-			fmt.Println("response Headers:", resp2.Header)
-			fmt.Println("response Body:", string(body4))
 
 		}
 		if FastBoot == "on" {
@@ -513,16 +450,13 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
-			fmt.Println("URL:>", url2)
 			resp2, err2 := client2.Do(req2)
 			if err2 != nil {
 				http.Redirect(res, req, "/index", http.StatusSeeOther)
 				return
 			}
 			body5, _ := ioutil.ReadAll(resp2.Body)
-			fmt.Println("response Status:", resp2.Status)
-			fmt.Println("response Headers:", resp2.Header)
-			fmt.Println("response Body:", string(body5))
+
 		}
 		// Perform A server reset if checked
 		if AllowReset == "on" {
@@ -538,7 +472,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			client2 := &http.Client{Transport: tr}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
-			fmt.Println("URL:>", url2)
 			resp2, err2 := client2.Do(req2)
 			if err2 != nil {
 				fmt.Println("Error: ", err)
@@ -546,12 +479,9 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			body6, _ := ioutil.ReadAll(resp2.Body)
-			fmt.Println("response Status:", resp2.Status)
-			fmt.Println("response Headers:", resp2.Header)
-			fmt.Println("response Body:", string(body6))
+
 			var data map[string]interface{}
 			json.Unmarshal([]byte(body6), &data)
-			fmt.Println("PowerState:", data["PowerState"])
 			state := data["PowerState"]
 
 			// if off we start system
@@ -561,7 +491,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				client2 = &http.Client{Transport: tr}
 				req2.Header.Set("X-Auth-Token", token)
 				req2.Header.Set("Content-Type", "application/json")
-				fmt.Println("URL:>", url2)
 				resp2, err2 = client2.Do(req2)
 				if err2 != nil {
 					fmt.Println("Error: ", err)
@@ -569,9 +498,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 					return
 				}
 				body7, _ := ioutil.ReadAll(resp2.Body)
-				fmt.Println("response Status:", resp2.Status)
-				fmt.Println("response Headers:", resp2.Header)
-				fmt.Println("response Body:", string(body7))
 
 			} else {
 
@@ -581,7 +507,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				client2 = &http.Client{Transport: tr}
 				req2.Header.Set("X-Auth-Token", token)
 				req2.Header.Set("Content-Type", "application/json")
-				fmt.Println("URL:>", url2)
 				resp2, err2 = client2.Do(req2)
 				if err2 != nil {
 					fmt.Println("Error: ", err)
@@ -589,9 +514,6 @@ func Send(res http.ResponseWriter, req *http.Request) {
 					return
 				}
 				body8, _ := ioutil.ReadAll(resp2.Body)
-				fmt.Println("response Status:", resp2.Status)
-				fmt.Println("response Headers:", resp2.Header)
-				fmt.Println("response Body:", string(body8))
 
 			}
 
@@ -615,6 +537,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 	var data map[string]map[string]interface{}
 	var data2 map[string]interface{}
 	var data3 map[string]interface{}
+	var data4 map[string][]map[string]interface{}
 
 	myinventory := []InventoryServer{}
 
@@ -624,19 +547,13 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 	Username := req.FormValue("Username")
 	Password := req.FormValue("Password")
 
-	fmt.Println("ILO", ILOHostname)
-	fmt.Println("User", Username)
-	fmt.Println("Password", Password)
-
 	fmt.Println("------> Launch API Inventory")
 
 	url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
-	fmt.Println("URL:>", url)
 	// Retrieve X-Auth-Token
 	// Create my Body
 	jsonStr := Credential{Username, Password}
 	theJson, _ := json.Marshal(jsonStr)
-	fmt.Println("Body:>", jsonStr)
 
 	// Disable self certificate check
 	tr := &http.Transport{
@@ -656,11 +573,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("response Status:", resp.Status)
-	fmt.Println("response Headers:", resp.Header)
-	fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
@@ -670,7 +583,6 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 	client2 := &http.Client{Transport: tr}
 	req2.Header.Set("X-Auth-Token", token)
 	req2.Header.Set("Content-Type", "application/json")
-	fmt.Println("URL:>", url2)
 	resp2, err2 := client2.Do(req2)
 	if err2 != nil {
 		fmt.Println("Error: ", err)
@@ -686,7 +598,6 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 	client3 := &http.Client{Transport: tr}
 	req3.Header.Set("X-Auth-Token", token)
 	req3.Header.Set("Content-Type", "application/json")
-	fmt.Println("URL:>", url2)
 	resp3, err3 := client3.Do(req3)
 	if err3 != nil {
 		fmt.Println("Error: ", err)
@@ -695,33 +606,31 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 	}
 	body10, _ := ioutil.ReadAll(resp3.Body)
 
-	fmt.Println("response Status:", resp2.Status)
-	fmt.Println("response Headers:", resp2.Header)
-	fmt.Println("response Body:", string(body10))
+	url4 := "https://" + ILOHostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
+	req4, err4 := http.NewRequest("GET", url4, nil)
+	client4 := &http.Client{Transport: tr}
+	req4.Header.Set("X-Auth-Token", token)
+	req4.Header.Set("Content-Type", "application/json")
+	resp4, err4 := client4.Do(req4)
+	if err4 != nil {
+		fmt.Println("Error: ", err)
+		// http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return
+	}
+	body11, _ := ioutil.ReadAll(resp4.Body)
 
 	json.Unmarshal([]byte(body9), &data)
 	json.Unmarshal([]byte(body9), &data2)
 	json.Unmarshal([]byte(body10), &data3)
-
-	// fmt.Println("Memory:", data["Memory"]["TotalSystemMemoryGB"])
-	// fmt.Println("CPU:", data["Processors"]["Count"])
-	// fmt.Println("CPU:", data["Processors"]["ProcessorFamily"])
-
-	// fmt.Println("Model:", data2["Model"])
-	// fmt.Println("SerialNumber:", data2["SerialNumber"])
-	// fmt.Println("Health:", data["Status"]["Health"])
-
-	// // Retrieve Power Setting
-	// fmt.Println("Power:", data3["PowerRegulator"])
+	json.Unmarshal([]byte(body11), &data4)
 
 	// HTML Rendering
-
-	fmt.Println(data["Memory"]["TotalSystemMemoryGB"].(float64))
 
 	// tempmem := data["Memory"]["TotalSystemMemoryGB"].(float64)
 
 	myinventory = append(myinventory, InventoryServer{
 
+		Hostname:     data4["Items"][0]["FQDN"].(string),
 		Memory:       data["Memory"]["TotalSystemMemoryGB"].(float64),
 		CPUNum:       data["Processors"]["Count"].(float64),
 		CPUModel:     data["Processors"]["ProcessorFamily"].(string),
@@ -730,8 +639,6 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 		Health:       data["Status"]["Health"].(string),
 		Power:        data3["PowerRegulator"].(string),
 	})
-
-	fmt.Println("ServerInfo", myinventory)
 
 	// Massive
 
@@ -751,19 +658,13 @@ func Rebootquick(res http.ResponseWriter, req *http.Request) {
 	Username := req.FormValue("Username")
 	Password := req.FormValue("Password")
 
-	fmt.Println("ILO", ILOHostname)
-	fmt.Println("User", Username)
-	fmt.Println("Password", Password)
-
 	// Call to API ILO x-auth-token
 
 	url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
-	fmt.Println("URL:>", url)
 	// Retrieve X-Auth-Token
 	// Create my Body
 	jsonStr := Credential{Username, Password}
 	theJson, _ := json.Marshal(jsonStr)
-	fmt.Println("Body:>", jsonStr)
 
 	// Disable self certificate check
 	tr := &http.Transport{
@@ -783,11 +684,7 @@ func Rebootquick(res http.ResponseWriter, req *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("response Status:", resp.Status)
-	fmt.Println("response Headers:", resp.Header)
-	fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
@@ -798,7 +695,6 @@ func Rebootquick(res http.ResponseWriter, req *http.Request) {
 	client2 := &http.Client{Transport: tr}
 	req2.Header.Set("X-Auth-Token", token)
 	req2.Header.Set("Content-Type", "application/json")
-	fmt.Println("URL:>", url2)
 	resp2, err2 := client2.Do(req2)
 	if err2 != nil {
 		fmt.Println("Error: ", err)
@@ -806,9 +702,6 @@ func Rebootquick(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	body2, _ := ioutil.ReadAll(resp2.Body)
-	fmt.Println("response Status:", resp2.Status)
-	fmt.Println("response Headers:", resp2.Header)
-	fmt.Println("response Body:", string(body2))
 
 }
 
@@ -823,19 +716,13 @@ func Reboothold(res http.ResponseWriter, req *http.Request) {
 	Username := req.FormValue("Username")
 	Password := req.FormValue("Password")
 
-	fmt.Println("ILO", ILOHostname)
-	fmt.Println("User", Username)
-	fmt.Println("Password", Password)
-
 	// Call to API ILO x-auth-token
 
 	url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
-	fmt.Println("URL:>", url)
 	// Retrieve X-Auth-Token
 	// Create my Body
 	jsonStr := Credential{Username, Password}
 	theJson, _ := json.Marshal(jsonStr)
-	fmt.Println("Body:>", jsonStr)
 
 	// Disable self certificate check
 	tr := &http.Transport{
@@ -855,11 +742,7 @@ func Reboothold(res http.ResponseWriter, req *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("response Status:", resp.Status)
-	fmt.Println("response Headers:", resp.Header)
-	fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
@@ -870,7 +753,6 @@ func Reboothold(res http.ResponseWriter, req *http.Request) {
 	client2 := &http.Client{Transport: tr}
 	req2.Header.Set("X-Auth-Token", token)
 	req2.Header.Set("Content-Type", "application/json")
-	fmt.Println("URL:>", url2)
 	resp2, err2 := client2.Do(req2)
 	if err2 != nil {
 		fmt.Println("Error: ", err)
@@ -878,9 +760,6 @@ func Reboothold(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	body2, _ := ioutil.ReadAll(resp2.Body)
-	fmt.Println("response Status:", resp2.Status)
-	fmt.Println("response Headers:", resp2.Header)
-	fmt.Println("response Body:", string(body2))
 
 }
 
@@ -894,19 +773,13 @@ func Reset(res http.ResponseWriter, req *http.Request) {
 	Username := req.FormValue("Username")
 	Password := req.FormValue("Password")
 
-	fmt.Println("ILO", ILOHostname)
-	fmt.Println("User", Username)
-	fmt.Println("Password", Password)
-
 	// Call to API ILO x-auth-token
 
 	url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
-	fmt.Println("URL:>", url)
 	// Retrieve X-Auth-Token
 	// Create my Body
 	jsonStr := Credential{Username, Password}
 	theJson, _ := json.Marshal(jsonStr)
-	fmt.Println("Body:>", jsonStr)
 
 	// Disable self certificate check
 	tr := &http.Transport{
@@ -926,11 +799,7 @@ func Reset(res http.ResponseWriter, req *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	fmt.Println("response Status:", resp.Status)
-	fmt.Println("response Headers:", resp.Header)
-	fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
@@ -941,7 +810,6 @@ func Reset(res http.ResponseWriter, req *http.Request) {
 	client2 := &http.Client{Transport: tr}
 	req2.Header.Set("X-Auth-Token", token)
 	req2.Header.Set("Content-Type", "application/json")
-	fmt.Println("URL:>", url2)
 	resp2, err2 := client2.Do(req2)
 	if err2 != nil {
 		fmt.Println("Error: ", err)
@@ -949,9 +817,6 @@ func Reset(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	body2, _ := ioutil.ReadAll(resp2.Body)
-	fmt.Println("response Status:", resp2.Status)
-	fmt.Println("response Headers:", resp2.Header)
-	fmt.Println("response Body:", string(body2))
 
 }
 

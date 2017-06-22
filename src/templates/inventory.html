@@ -1,23 +1,22 @@
 {{range .}}
 <div class="card-block">
+    Hostname: {{.Hostname}}
+    <br />
     Memory: {{.Memory}}
-    <br>
+    <br />
     Cpu Number:{{.CPUNum}}
-    <br>
-
+    <br />
     CPU Model: {{.CPUModel}}
-    <br>
+    <br />
     Model: {{.Model}}
-    <br>
+    <br />
     SerialNumber: {{.SerialNumber}}
-    <br>
+    <br />
     Health: {{.Health}}
-    <br>
+    <br />
     PowerSetting: {{.Power}}
-    <br>
-
+    <br />
 </div>
-
 <p>
     {{end}}
 
