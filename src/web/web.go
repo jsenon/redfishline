@@ -46,6 +46,17 @@ type Credential struct {
 	Password string `json:"Password"`
 }
 
+type InventoryServer struct {
+	Name         string  `json:"Name"`
+	Memory       float64 `json:"Memory"`
+	CPUNum       float64 `json:"CPUNum"`
+	CPUModel     string  `json:"CPUModel"`
+	Model        string  `json:"Model"`
+	SerialNumber string  `json:"SerialNumber"`
+	Health       string  `json:"Health"`
+	Power        string  `json:"Power"`
+}
+
 // Multiple Server input
 var Servers []ILODefinition
 
@@ -603,18 +614,9 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 
 	var data map[string]map[string]interface{}
 	var data2 map[string]interface{}
-	var data3 map[string]map[string]map[string]interface{}
+	var data3 map[string]interface{}
 
-	json.Unmarshal([]byte(body), &data)
-	fmt.Println("Memory:", data["Memory"]["TotalSystemMemoryGB"])
-	fmt.Println("CPU:", data["Processors"]["Count"])
-	fmt.Println("CPU:", data["Processors"]["ProcessorFamily"])
-
-	fmt.Println("Model:", data2["Model"])
-	fmt.Println("SerialNumber:", data2["SerialNumber"])
-	fmt.Println("Health:", data["Status"]["Health"])
-
-	fmt.Println("PowerSetting:", data3["Oem"]["Hp"]["PowerRegulatorMode"])
+	myinventory := []InventoryServer{}
 
 	req.ParseForm()
 
@@ -628,7 +630,114 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 
 	fmt.Println("------> Launch API Inventory")
 
-	http.Redirect(res, req, "/index", http.StatusSeeOther)
+	url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
+	fmt.Println("URL:>", url)
+	// Retrieve X-Auth-Token
+	// Create my Body
+	jsonStr := Credential{Username, Password}
+	theJson, _ := json.Marshal(jsonStr)
+	fmt.Println("Body:>", jsonStr)
+
+	// Disable self certificate check
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(theJson))
+	// req.Header.Set("X-Custom-Header", "")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{Transport: tr}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error: ", err)
+		http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("response Status:", resp.Status)
+	fmt.Println("response Headers:", resp.Header)
+	fmt.Println("AUTH:", resp.Header.Get("x-auth-token"))
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
+
+	// Retrieve x-auth-token
+	token := resp.Header.Get("x-auth-token")
+
+	url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
+	req2, err2 := http.NewRequest("GET", url2, nil)
+	client2 := &http.Client{Transport: tr}
+	req2.Header.Set("X-Auth-Token", token)
+	req2.Header.Set("Content-Type", "application/json")
+	fmt.Println("URL:>", url2)
+	resp2, err2 := client2.Do(req2)
+	if err2 != nil {
+		fmt.Println("Error: ", err)
+		// http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return
+	}
+	body9, _ := ioutil.ReadAll(resp2.Body)
+
+	// BIOS
+
+	url3 := "https://" + ILOHostname + "/redfish/v1/Systems/1/Bios/"
+	req3, err3 := http.NewRequest("GET", url3, nil)
+	client3 := &http.Client{Transport: tr}
+	req3.Header.Set("X-Auth-Token", token)
+	req3.Header.Set("Content-Type", "application/json")
+	fmt.Println("URL:>", url2)
+	resp3, err3 := client3.Do(req3)
+	if err3 != nil {
+		fmt.Println("Error: ", err)
+		// http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return
+	}
+	body10, _ := ioutil.ReadAll(resp3.Body)
+
+	fmt.Println("response Status:", resp2.Status)
+	fmt.Println("response Headers:", resp2.Header)
+	fmt.Println("response Body:", string(body10))
+
+	json.Unmarshal([]byte(body9), &data)
+	json.Unmarshal([]byte(body9), &data2)
+	json.Unmarshal([]byte(body10), &data3)
+
+	// fmt.Println("Memory:", data["Memory"]["TotalSystemMemoryGB"])
+	// fmt.Println("CPU:", data["Processors"]["Count"])
+	// fmt.Println("CPU:", data["Processors"]["ProcessorFamily"])
+
+	// fmt.Println("Model:", data2["Model"])
+	// fmt.Println("SerialNumber:", data2["SerialNumber"])
+	// fmt.Println("Health:", data["Status"]["Health"])
+
+	// // Retrieve Power Setting
+	// fmt.Println("Power:", data3["PowerRegulator"])
+
+	// HTML Rendering
+
+	fmt.Println(data["Memory"]["TotalSystemMemoryGB"].(float64))
+
+	// tempmem := data["Memory"]["TotalSystemMemoryGB"].(float64)
+
+	myinventory = append(myinventory, InventoryServer{
+
+		Memory:       data["Memory"]["TotalSystemMemoryGB"].(float64),
+		CPUNum:       data["Processors"]["Count"].(float64),
+		CPUModel:     data["Processors"]["ProcessorFamily"].(string),
+		Model:        data2["Model"].(string),
+		SerialNumber: data2["SerialNumber"].(string),
+		Health:       data["Status"]["Health"].(string),
+		Power:        data3["PowerRegulator"].(string),
+	})
+
+	fmt.Println("ServerInfo", myinventory)
+
+	// Massive
+
+	req.ParseForm()
+	t, _ := template.ParseFiles("templates/inventory.html")
+	t.Execute(res, myinventory)
 
 }
 
