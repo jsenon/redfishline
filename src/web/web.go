@@ -166,7 +166,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 			defer resp.Body.Close()
 
-			body, _ := ioutil.ReadAll(resp.Body)
+			// body, _ := ioutil.ReadAll(resp.Body)
 
 			// Retrieve x-auth-token
 			token := resp.Header.Get("x-auth-token")
@@ -191,13 +191,13 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				}
 				req2.Header.Set("X-Auth-Token", token)
 				req2.Header.Set("Content-Type", "application/json")
-				resp2, err2 := client2.Do(req2)
+				_, err2 := client2.Do(req2)
 				if err2 != nil {
 					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
 					// http.Redirect(res, req, "/index", http.StatusSeeOther)
 					// return
 				}
-				body2, _ := ioutil.ReadAll(resp2.Body)
+				// body2, _ := ioutil.ReadAll(resp2.Body)
 
 			}
 			if Legacy == "on" && UEFI == "" {
@@ -212,13 +212,13 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				}
 				req2.Header.Set("X-Auth-Token", token)
 				req2.Header.Set("Content-Type", "application/json")
-				resp2, err2 := client2.Do(req2)
+				_, err2 := client2.Do(req2)
 				if err2 != nil {
 					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
 					// http.Redirect(res, req, "/index", http.StatusSeeOther)
 					// return
 				}
-				body3, _ := ioutil.ReadAll(resp2.Body)
+				// body3, _ := ioutil.ReadAll(resp2.Body)
 
 			}
 			if Useradd == "on" {
@@ -237,13 +237,13 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				req2.Header.Set("X-Auth-Token", token)
 				req2.Header.Set("Content-Type", "application/json")
 
-				resp2, err2 := client2.Do(req2)
+				_, err2 := client2.Do(req2)
 				if err2 != nil {
 					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
 					// http.Redirect(res, req, "/index", http.StatusSeeOther)
 					// return
 				}
-				body4, _ := ioutil.ReadAll(resp2.Body)
+				// body4, _ := ioutil.ReadAll(resp2.Body)
 
 			}
 			if FastBoot == "on" {
@@ -259,13 +259,13 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				}
 				req2.Header.Set("X-Auth-Token", token)
 				req2.Header.Set("Content-Type", "application/json")
-				resp2, err2 := client2.Do(req2)
+				_, err2 := client2.Do(req2)
 				if err2 != nil {
 					fmt.Println("Error Connection: ", Servers[i].ILOHostname)
 					// http.Redirect(res, req, "/index", http.StatusSeeOther)
 					// return
 				}
-				body5, _ := ioutil.ReadAll(resp2.Body)
+				// body5, _ := ioutil.ReadAll(resp2.Body)
 
 			}
 			// Perform A server reset if checked
@@ -307,7 +307,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 						// http.Redirect(res, req, "/index", http.StatusSeeOther)
 						return
 					}
-					body7, _ := ioutil.ReadAll(resp2.Body)
+					// body7, _ := ioutil.ReadAll(resp2.Body)
 
 				} else {
 
@@ -323,7 +323,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 						// http.Redirect(res, req, "/index", http.StatusSeeOther)
 						return
 					}
-					body8, _ := ioutil.ReadAll(resp2.Body)
+					// body8, _ := ioutil.ReadAll(resp2.Body)
 
 				}
 
@@ -358,7 +358,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 		}
 		defer resp.Body.Close()
 
-		body, _ := ioutil.ReadAll(resp.Body)
+		// body, _ := ioutil.ReadAll(resp.Body)
 
 		// Retrieve x-auth-token
 		token := resp.Header.Get("x-auth-token")
@@ -386,12 +386,12 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
-			resp2, err2 := client2.Do(req2)
+			_, err2 := client2.Do(req2)
 			if err2 != nil {
 				http.Redirect(res, req, "/index", http.StatusSeeOther)
 				return
 			}
-			body2, _ := ioutil.ReadAll(resp2.Body)
+			// body2, _ := ioutil.ReadAll(resp2.Body)
 
 		}
 		if Legacy == "on" && UEFI == "" {
@@ -406,12 +406,12 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
-			resp2, err2 := client2.Do(req2)
+			_, err2 := client2.Do(req2)
 			if err2 != nil {
 				http.Redirect(res, req, "/index", http.StatusSeeOther)
 				return
 			}
-			body3, _ := ioutil.ReadAll(resp2.Body)
+			// body3, _ := ioutil.ReadAll(resp2.Body)
 
 		}
 
@@ -431,12 +431,12 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
-			resp2, err2 := client2.Do(req2)
+			_, err2 := client2.Do(req2)
 			if err2 != nil {
 				http.Redirect(res, req, "/index", http.StatusSeeOther)
 				return
 			}
-			body4, _ := ioutil.ReadAll(resp2.Body)
+			// body4, _ := ioutil.ReadAll(resp2.Body)
 
 		}
 		if FastBoot == "on" {
@@ -450,12 +450,12 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
-			resp2, err2 := client2.Do(req2)
+			_, err2 := client2.Do(req2)
 			if err2 != nil {
 				http.Redirect(res, req, "/index", http.StatusSeeOther)
 				return
 			}
-			body5, _ := ioutil.ReadAll(resp2.Body)
+			// body5, _ := ioutil.ReadAll(resp2.Body)
 
 		}
 		// Perform A server reset if checked
@@ -497,7 +497,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 					// http.Redirect(res, req, "/index", http.StatusSeeOther)
 					return
 				}
-				body7, _ := ioutil.ReadAll(resp2.Body)
+				// body7, _ := ioutil.ReadAll(resp2.Body)
 
 			} else {
 
@@ -513,7 +513,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 					// http.Redirect(res, req, "/index", http.StatusSeeOther)
 					return
 				}
-				body8, _ := ioutil.ReadAll(resp2.Body)
+				// body8, _ := ioutil.ReadAll(resp2.Body)
 
 			}
 
@@ -573,7 +573,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	// body, _ := ioutil.ReadAll(resp.Body)
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
@@ -684,7 +684,7 @@ func Rebootquick(res http.ResponseWriter, req *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	// body, _ := ioutil.ReadAll(resp.Body)
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
@@ -695,13 +695,13 @@ func Rebootquick(res http.ResponseWriter, req *http.Request) {
 	client2 := &http.Client{Transport: tr}
 	req2.Header.Set("X-Auth-Token", token)
 	req2.Header.Set("Content-Type", "application/json")
-	resp2, err2 := client2.Do(req2)
+	_, err2 = client2.Do(req2)
 	if err2 != nil {
 		fmt.Println("Error: ", err)
 		// http.Redirect(res, req, "/index", http.StatusSeeOther)
 		return
 	}
-	body2, _ := ioutil.ReadAll(resp2.Body)
+	// body2, _ := ioutil.ReadAll(resp2.Body)
 
 }
 
@@ -742,7 +742,7 @@ func Reboothold(res http.ResponseWriter, req *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	// body, _ := ioutil.ReadAll(resp.Body)
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
@@ -753,13 +753,13 @@ func Reboothold(res http.ResponseWriter, req *http.Request) {
 	client2 := &http.Client{Transport: tr}
 	req2.Header.Set("X-Auth-Token", token)
 	req2.Header.Set("Content-Type", "application/json")
-	resp2, err2 := client2.Do(req2)
+	_, err2 = client2.Do(req2)
 	if err2 != nil {
 		fmt.Println("Error: ", err)
 		// http.Redirect(res, req, "/index", http.StatusSeeOther)
 		return
 	}
-	body2, _ := ioutil.ReadAll(resp2.Body)
+	// body2, _ := ioutil.ReadAll(resp2.Body)
 
 }
 
@@ -799,7 +799,7 @@ func Reset(res http.ResponseWriter, req *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	// body, _ := ioutil.ReadAll(resp.Body)
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
@@ -810,13 +810,13 @@ func Reset(res http.ResponseWriter, req *http.Request) {
 	client2 := &http.Client{Transport: tr}
 	req2.Header.Set("X-Auth-Token", token)
 	req2.Header.Set("Content-Type", "application/json")
-	resp2, err2 := client2.Do(req2)
+	_, err2 = client2.Do(req2)
 	if err2 != nil {
 		fmt.Println("Error: ", err)
 		// http.Redirect(res, req, "/index", http.StatusSeeOther)
 		return
 	}
-	body2, _ := ioutil.ReadAll(resp2.Body)
+	// body2, _ := ioutil.ReadAll(resp2.Body)
 
 }
 
