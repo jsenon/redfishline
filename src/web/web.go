@@ -19,6 +19,8 @@
 // 		"url" => "redfish/v1/Systems/1/", POST, {"Action": "Reset", "ResetType": "ForceRestart"}
 // 		"url" => "redfish/v1/Systems/1/", POST, {"Action": "PowerButton", "PushType": "Press", "Target": "/Oem/Hp"}
 // 		"url" => "redfish/v1/Systems/1/", POST, {"Action": "PowerButton", "PushType": "PressAndHold", "Target": "/Oem/Hp"}
+//
+//      With Help of @Merrick28
 
 package web
 
@@ -546,105 +548,239 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 	ILOHostname := req.FormValue("ILOHostname")
 	Username := req.FormValue("Username")
 	Password := req.FormValue("Password")
+	JSON := req.FormValue("JSON")
 
-	fmt.Println("------> Launch API Inventory")
-
-	url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
-	// Retrieve X-Auth-Token
-	// Create my Body
-	jsonStr := Credential{Username, Password}
-	theJson, _ := json.Marshal(jsonStr)
-
-	// Disable self certificate check
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(theJson))
-	// req.Header.Set("X-Custom-Header", "")
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{Transport: tr}
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println("Error: ", err)
+	// Error if JSON not exist and Hostname provided
+	if JSON == "" && ILOHostname == "" {
 		http.Redirect(res, req, "/index", http.StatusSeeOther)
 		return
 	}
-	defer resp.Body.Close()
 
-	// body, _ := ioutil.ReadAll(resp.Body)
+	// Massive ILO Credential
+	if JSON != "" {
+		fmt.Println("------> Launch Massive API Inventory")
 
-	// Retrieve x-auth-token
-	token := resp.Header.Get("x-auth-token")
+		// Remove old value if single hostname has been used before
+		Server.ILOHostname = ""
+		Server.Username = ""
+		Server.Password = ""
 
-	url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
-	req2, err2 := http.NewRequest("GET", url2, nil)
-	client2 := &http.Client{Transport: tr}
-	req2.Header.Set("X-Auth-Token", token)
-	req2.Header.Set("Content-Type", "application/json")
-	resp2, err2 := client2.Do(req2)
-	if err2 != nil {
-		fmt.Println("Error: ", err)
-		// http.Redirect(res, req, "/index", http.StatusSeeOther)
-		return
+		s := []ILODefinition{}
+
+		err := json.Unmarshal([]byte(JSON), &s)
+		if err != nil {
+			fmt.Println("Error: ", err)
+		}
+
+		// Loop on all node in config file json and store information in Server struct ILODefinition
+		for i := range s {
+			Servers = append(Servers, ILODefinition{
+
+				ILOHostname: s[i].ILOHostname,
+				Username:    s[i].Username,
+				Password:    s[i].Password,
+			})
+		}
+
+		// Loop on Servers
+		for i := range Servers {
+
+			url := "https://" + Servers[i].ILOHostname + "/redfish/v1/SessionService/Sessions/"
+			// Retrieve X-Auth-Token
+			// Create my Body
+			jsonStr := Credential{Username, Password}
+			theJson, _ := json.Marshal(jsonStr)
+
+			// Disable self certificate check
+			tr := &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			}
+
+			req, err := http.NewRequest("POST", url, bytes.NewBuffer(theJson))
+			// req.Header.Set("X-Custom-Header", "")
+			req.Header.Set("Content-Type", "application/json")
+
+			client := &http.Client{Transport: tr}
+			resp, err := client.Do(req)
+			if err != nil {
+				fmt.Println("Error: ", err)
+				http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
+			}
+			defer resp.Body.Close()
+
+			// body, _ := ioutil.ReadAll(resp.Body)
+
+			// Retrieve x-auth-token
+			token := resp.Header.Get("x-auth-token")
+
+			url2 := "https://" + Servers[i].ILOHostname + "/redfish/v1/Systems/1/"
+			req2, err2 := http.NewRequest("GET", url2, nil)
+			client2 := &http.Client{Transport: tr}
+			req2.Header.Set("X-Auth-Token", token)
+			req2.Header.Set("Content-Type", "application/json")
+			resp2, err2 := client2.Do(req2)
+			if err2 != nil {
+				fmt.Println("Error: ", err)
+				// http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
+			}
+			body9, _ := ioutil.ReadAll(resp2.Body)
+
+			// BIOS
+
+			url3 := "https://" + Servers[i].ILOHostname + "/redfish/v1/Systems/1/Bios/"
+			req3, err3 := http.NewRequest("GET", url3, nil)
+			client3 := &http.Client{Transport: tr}
+			req3.Header.Set("X-Auth-Token", token)
+			req3.Header.Set("Content-Type", "application/json")
+			resp3, err3 := client3.Do(req3)
+			if err3 != nil {
+				fmt.Println("Error: ", err)
+				// http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
+			}
+			body10, _ := ioutil.ReadAll(resp3.Body)
+
+			url4 := "https://" + Servers[i].ILOHostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
+			req4, err4 := http.NewRequest("GET", url4, nil)
+			client4 := &http.Client{Transport: tr}
+			req4.Header.Set("X-Auth-Token", token)
+			req4.Header.Set("Content-Type", "application/json")
+			resp4, err4 := client4.Do(req4)
+			if err4 != nil {
+				fmt.Println("Error: ", err)
+				// http.Redirect(res, req, "/index", http.StatusSeeOther)
+				return
+			}
+			body11, _ := ioutil.ReadAll(resp4.Body)
+
+			json.Unmarshal([]byte(body9), &data)
+			json.Unmarshal([]byte(body9), &data2)
+			json.Unmarshal([]byte(body10), &data3)
+			json.Unmarshal([]byte(body11), &data4)
+
+			// HTML Rendering
+
+			// tempmem := data["Memory"]["TotalSystemMemoryGB"].(float64)
+
+			myinventory = append(myinventory, InventoryServer{
+
+				Hostname:     data4["Items"][0]["FQDN"].(string),
+				Memory:       data["Memory"]["TotalSystemMemoryGB"].(float64),
+				CPUNum:       data["Processors"]["Count"].(float64),
+				CPUModel:     data["Processors"]["ProcessorFamily"].(string),
+				Model:        data2["Model"].(string),
+				SerialNumber: data2["SerialNumber"].(string),
+				Health:       data["Status"]["Health"].(string),
+				Power:        data3["PowerRegulator"].(string),
+			})
+		}
+
+	} else {
+
+		// Single ILO Credential
+
+		fmt.Println("------> Launch API Inventory")
+
+		url := "https://" + ILOHostname + "/redfish/v1/SessionService/Sessions/"
+		// Retrieve X-Auth-Token
+		// Create my Body
+		jsonStr := Credential{Username, Password}
+		theJson, _ := json.Marshal(jsonStr)
+
+		// Disable self certificate check
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+
+		req, err := http.NewRequest("POST", url, bytes.NewBuffer(theJson))
+		// req.Header.Set("X-Custom-Header", "")
+		req.Header.Set("Content-Type", "application/json")
+
+		client := &http.Client{Transport: tr}
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Println("Error: ", err)
+			http.Redirect(res, req, "/index", http.StatusSeeOther)
+			return
+		}
+		defer resp.Body.Close()
+
+		// body, _ := ioutil.ReadAll(resp.Body)
+
+		// Retrieve x-auth-token
+		token := resp.Header.Get("x-auth-token")
+
+		url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
+		req2, err2 := http.NewRequest("GET", url2, nil)
+		client2 := &http.Client{Transport: tr}
+		req2.Header.Set("X-Auth-Token", token)
+		req2.Header.Set("Content-Type", "application/json")
+		resp2, err2 := client2.Do(req2)
+		if err2 != nil {
+			fmt.Println("Error: ", err)
+			// http.Redirect(res, req, "/index", http.StatusSeeOther)
+			return
+		}
+		body9, _ := ioutil.ReadAll(resp2.Body)
+
+		// BIOS
+
+		url3 := "https://" + ILOHostname + "/redfish/v1/Systems/1/Bios/"
+		req3, err3 := http.NewRequest("GET", url3, nil)
+		client3 := &http.Client{Transport: tr}
+		req3.Header.Set("X-Auth-Token", token)
+		req3.Header.Set("Content-Type", "application/json")
+		resp3, err3 := client3.Do(req3)
+		if err3 != nil {
+			fmt.Println("Error: ", err)
+			// http.Redirect(res, req, "/index", http.StatusSeeOther)
+			return
+		}
+		body10, _ := ioutil.ReadAll(resp3.Body)
+
+		url4 := "https://" + ILOHostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
+		req4, err4 := http.NewRequest("GET", url4, nil)
+		client4 := &http.Client{Transport: tr}
+		req4.Header.Set("X-Auth-Token", token)
+		req4.Header.Set("Content-Type", "application/json")
+		resp4, err4 := client4.Do(req4)
+		if err4 != nil {
+			fmt.Println("Error: ", err)
+			// http.Redirect(res, req, "/index", http.StatusSeeOther)
+			return
+		}
+		body11, _ := ioutil.ReadAll(resp4.Body)
+
+		json.Unmarshal([]byte(body9), &data)
+		json.Unmarshal([]byte(body9), &data2)
+		json.Unmarshal([]byte(body10), &data3)
+		json.Unmarshal([]byte(body11), &data4)
+
+		// HTML Rendering
+
+		// tempmem := data["Memory"]["TotalSystemMemoryGB"].(float64)
+
+		myinventory = append(myinventory, InventoryServer{
+
+			Hostname:     data4["Items"][0]["FQDN"].(string),
+			Memory:       data["Memory"]["TotalSystemMemoryGB"].(float64),
+			CPUNum:       data["Processors"]["Count"].(float64),
+			CPUModel:     data["Processors"]["ProcessorFamily"].(string),
+			Model:        data2["Model"].(string),
+			SerialNumber: data2["SerialNumber"].(string),
+			Health:       data["Status"]["Health"].(string),
+			Power:        data3["PowerRegulator"].(string),
+		})
+
+		// Massive
+
+		req.ParseForm()
+		t, _ := template.ParseFiles("templates/inventory.html")
+		t.Execute(res, myinventory)
+
 	}
-	body9, _ := ioutil.ReadAll(resp2.Body)
-
-	// BIOS
-
-	url3 := "https://" + ILOHostname + "/redfish/v1/Systems/1/Bios/"
-	req3, err3 := http.NewRequest("GET", url3, nil)
-	client3 := &http.Client{Transport: tr}
-	req3.Header.Set("X-Auth-Token", token)
-	req3.Header.Set("Content-Type", "application/json")
-	resp3, err3 := client3.Do(req3)
-	if err3 != nil {
-		fmt.Println("Error: ", err)
-		// http.Redirect(res, req, "/index", http.StatusSeeOther)
-		return
-	}
-	body10, _ := ioutil.ReadAll(resp3.Body)
-
-	url4 := "https://" + ILOHostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
-	req4, err4 := http.NewRequest("GET", url4, nil)
-	client4 := &http.Client{Transport: tr}
-	req4.Header.Set("X-Auth-Token", token)
-	req4.Header.Set("Content-Type", "application/json")
-	resp4, err4 := client4.Do(req4)
-	if err4 != nil {
-		fmt.Println("Error: ", err)
-		// http.Redirect(res, req, "/index", http.StatusSeeOther)
-		return
-	}
-	body11, _ := ioutil.ReadAll(resp4.Body)
-
-	json.Unmarshal([]byte(body9), &data)
-	json.Unmarshal([]byte(body9), &data2)
-	json.Unmarshal([]byte(body10), &data3)
-	json.Unmarshal([]byte(body11), &data4)
-
-	// HTML Rendering
-
-	// tempmem := data["Memory"]["TotalSystemMemoryGB"].(float64)
-
-	myinventory = append(myinventory, InventoryServer{
-
-		Hostname:     data4["Items"][0]["FQDN"].(string),
-		Memory:       data["Memory"]["TotalSystemMemoryGB"].(float64),
-		CPUNum:       data["Processors"]["Count"].(float64),
-		CPUModel:     data["Processors"]["ProcessorFamily"].(string),
-		Model:        data2["Model"].(string),
-		SerialNumber: data2["SerialNumber"].(string),
-		Health:       data["Status"]["Health"].(string),
-		Power:        data3["PowerRegulator"].(string),
-	})
-
-	// Massive
-
-	req.ParseForm()
-	t, _ := template.ParseFiles("templates/inventory.html")
-	t.Execute(res, myinventory)
 
 }
 
