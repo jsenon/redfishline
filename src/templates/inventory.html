@@ -1,25 +1,23 @@
-<div class="card">
+{{range .}}
+<div class="card-block">
+    Memory: {{.Memory}}
+    <br>
+    Cpu Number:{{.CPUNum}}
+    <br>
 
-    {{range .}}
-    <div class="card-block">
-        Memory: {{.Memory}}
-        <br>
-        Cpu Number:{{.CPUNum}}
-        <br>
+    CPU Model: {{.CPUModel}}
+    <br>
+    Model: {{.Model}}
+    <br>
+    SerialNumber: {{.SerialNumber}}
+    <br>
+    Health: {{.Health}}
+    <br>
+    PowerSetting: {{.Power}}
+    <br>
 
-        CPU Model: {{.CPUModel}}
-        <br>
-        Model: {{.Model}}
-        <br>
-        SerialNumber: {{.SerialNumber}}
-        <br>
-        Health: {{.Health}}
-        <br>
-        PowerSetting: {{.Power}}
-        <br>
-
-    </div>
 </div>
+
 <p>
     {{end}}
 
