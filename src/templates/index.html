@@ -1,123 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-		<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-		<link rel="stylesheet" href="prism.css" crossorigin="anonymous">
-		<script src="prism.js" crossorigin="anonymous"></script>
-		
-		
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+          integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <!--<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
+            integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
+            crossorigin="anonymous"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
+            integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
+            integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="prism.css" crossorigin="anonymous">
+    <script src="prism.js" crossorigin="anonymous"></script>
 
-		<style>
-			.table td, .table th { 
-				text-align: left; 
-			}
-			body {
-			text-shadow: none;
-			font-size: 12px;
-			}
 
-			.btn {
-				font-size: 12px;
-			}
-			.dropdown-menu{
-			    font-size: 12px;
+    <style>
+        .table td, .table th {
+            text-align: left;
+        }
 
-			}
-			.form-control {
-				font-size: 12px;
-			}
-		</style>
-	</head>
+        body {
+            text-shadow: none;
+            font-size: 12px;
+        }
 
-	<body>
+        .btn {
+            font-size: 12px;
+        }
 
-		<div class="container">
-			<ul class="nav">
-				<li class="nav-item">
-					<a class="nav-link active" href="/index">Home</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link disabled"  href="#" target="_blank">Api</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#">Contact</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link active" href="/help">Help</a>
-				</li>
-			</ul>
-			</br>
+        .dropdown-menu {
+            font-size: 12px;
 
-			<div class="col-md-6" style="text-align: left;" >
-				<h4>
-					RedFish Line
-				</h4>
-				<tr>
-				</tr>
-				</br>
-			</div>
+        }
 
-			<div class="col-md-10" style="text-align: left;" >
-			<form method="POST" accept-charset="UTF-8" id="my_form">
-				<fieldset >
-				<legend>Server API Input</legend>
+        .form-control {
+            font-size: 12px;
+        }
+    </style>
+</head>
 
-					<div id="accordion" role="tablist" aria-multiselectable="true">
+<body>
 
-						<div class="card">
-							<div class="card-header" role="tab" id="headingOne">
-								<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-						    	Single ILO Credential </a>
-						  	</div>
-						  	<div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-		 						<div class="card-block">
-							
-									<div class="form-inline">
+<div class="container">
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link active" href="/index">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled" href="#" target="_blank">Api</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/help">Help</a>
+        </li>
+    </ul>
+    <br/>
 
-										<div class="input-group">
-											<label class="sr-only">{{.Username}}</label>
-											<span class="input-group-addon" id="sizing-addon2">User</span>
-											<input id="User" name="Username" value="User" type="text" class="form-control" placeholder="Username" aria-describedby="sizing-addon2">
-										</div>
-										<div class="input-group">
-											<label class="sr-only">{{.Password}}</label>
-											<span  class="input-group-addon" id="sizing-addon2">Password</span>
-											<input type="password" id="Password" name="Password" value="Password" class="form-control" placeholder="Password" aria-describedby="sizing-addon2">
-										</div>
-										<div class="input-group">
-											<label class="sr-only">{{.ILOHostname}}</label>
-											<span class="input-group-addon" id="sizing-addon2">Host</span>
-											<input id="ILO" name="ILOHostname"  type="text" class="form-control" placeholder="ILOHostname" aria-describedby="sizing-addon2" value={{.ILOHostname}}>
-										</div>
-										
-									
+    <div class="col-md-6" style="text-align: left;">
+        <h4>
+            RedFish Line
+        </h4>
 
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					</br>
-					
-					<div id="accordion2" role="tablist" aria-multiselectable="true">
+        <br/>
+    </div>
 
-						<div class="card">
-							<div class="card-header" role="tab" id="headingOne2">
-						        <a data-toggle="collapse" data-parent="#accordion2" href="#collapseOne2" aria-expanded="true" aria-controls="collapseOne2">
-								Massive ILO Servers Definition </a>
-						  	</div>
-					  	    <div id="collapseOne2" class="collapse show" role="tabpanel" aria-labelledby="headingOne2">
 
-		 						<div class="card-block">
-									<div class="form-group">
-									    <label for="exampleTextarea">JSON Struct</label>
-									    <textarea class="form-control" id="exampleTextarea" rows="3" name="JSON"></textarea>
-									</div>
-									<pre>
+    <form method="POST" accept-charset="UTF-8" id="my_form">
+
+
+        <legend>Server API Input</legend>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <div id="accordion" role="tablist" aria-multiselectable="true">
+
+                    <div class="card">
+                        <div class="card-header" role="tab" id="headingOne">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                               aria-expanded="true"
+                               aria-controls="collapseOne">
+                                Single ILO Credential </a>
+                        </div>
+                        <div id="collapseOne" class="collapse show" role="tabpanel"
+                             aria-labelledby="headingOne">
+                            <div class="card-block">
+
+                                <div class="form-group">
+
+                                    <div class="input-group">
+                                        <label class="sr-only">{{.Username}}</label>
+                                        <span class="input-group-addon" style="width: 90px;">User</span>
+                                        <input id="User" name="Username" type="text"
+                                               class="form-control" placeholder="Username"
+                                               aria-describedby="sizing-addon2">
+                                    </div>
+                                    <div class="input-group">
+                                        <label class="sr-only">{{.Password}}</label>
+                                        <span class="input-group-addon" style="width: 90px;">Password</span>
+                                        <input id="Password" name="Password" type="text" class="form-control"
+                                               placeholder="Password" aria-describedby="sizing-addon2">
+                                    </div>
+                                    <div class="input-group">
+                                        <label class="sr-only">{{.ILOHostname}}</label>
+                                        <span class="input-group-addon" style="width: 90px;">Host</span>
+                                        <input id="ILO" name="ILOHostname" type="text" class="form-control"
+                                               placeholder="ILOHostname" aria-describedby="sizing-addon2"
+                                               value={{.ILOHostname}}>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <div id="accordion2" role="tablist" aria-multiselectable="true">
+
+                    <div class="card">
+                        <div class="card-header" role="tab" id="headingOne2">
+                            <a data-toggle="collapse" data-parent="#accordion2" href="#collapseOne2"
+                               aria-expanded="true" aria-controls="collapseOne2">
+                                Massive ILO Servers Definition </a>
+                        </div>
+                        <div id="collapseOne2" class="collapse show" role="tabpanel"
+                             aria-labelledby="headingOne2">
+
+                            <div class="card-block">
+                                <div class="form-group">
+                                    <label for="exampleTextarea">JSON Struct</label>
+                                    <textarea class="form-control" id="exampleTextarea" rows="3"
+                                              name="JSON"></textarea>
+                                </div>
+                                <pre>
+
 									<code class="language-json">
 [
 	{
@@ -130,124 +153,155 @@
 		"Username": "MyUser",
 		"Password": "MyPassword"
 	}
-	]
+]
 									</code>
 								</pre>
 
-									
-								</div>
-							</div>
-						</div>
-					</div>
-					</br>
-					<div id="accordion3" role="tablist" aria-multiselectable="true">
 
-						<div class="card">
-							<div class="card-header" role="tab" id="headingOne3">
-						        <a data-toggle="collapse" data-parent="#accordion3" href="#collapseOne3" aria-expanded="true" aria-controls="collapseOne3">
-						    	ILO Configuration Selection</a>
-						  	</div>
-						  	<div id="collapseOne3" class="collapse show" role="tabpanel" aria-labelledby="headingOne3">
-		 						<div class="card-block">
-							    	<label class="form-check-label">
-							      	<input type="checkbox" class="form-check-input" name="UEFI">
-							      	BIOS UEFI
-							    	</label>
-							    	<label class="form-check-label">
-							      	<input type="checkbox" class="form-check-input" name="Legacy">
-							      	BIOS LEGACY
-							    	</label>
-								    </br>
-							    	<label class="form-check-label">
-							      	<input type="checkbox" class="form-check-input" name="Useradd">
-							      	Add User
-							    	</label>
-							    	<label class="form-check-label">
-							      	<input type="checkbox" class="form-check-input" name="PowerHigh">
-							      	Power High Performance
-							    	</label>
-							    	<label class="form-check-label">
-							      	<input type="checkbox" class="form-check-input" name="FastBoot">
-							      	Fast Boot
-							    	</label>
-								    </br>
-							    	<label class="form-check-label">
-							      	<input type="checkbox" class="form-check-input" name="AllowReset">
-							      	Allow Reset Now
-							    	</label>
-							    </div>
-							</div>
-						</div>
-					</div>
-					<p>
-			    		</br>
-			    		<button class="btn btn-outline-primary" type="submit" formaction="/send">Go</button>
-						<button class="btn btn-outline-danger" type="reset">Reset</button>
-					<p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <div id="accordion3" role="tablist" aria-multiselectable="true">
 
-					<div id="accordion4" role="tablist" aria-multiselectable="true">
+                    <div class="card">
+                        <div class="card-header" role="tab" id="headingOne3">
+                            <a data-toggle="collapse" data-parent="#accordion3" href="#collapseOne3"
+                               aria-expanded="true" aria-controls="collapseOne3">
+                                ILO Configuration Selection</a>
+                        </div>
+                        <div id="collapseOne3" class="collapse show" role="tabpanel" aria-labelledby="headingOne3">
+                            <div class="card-block">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="UEFI">
+                                    BIOS UEFI
+                                </label>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="Legacy">
+                                    BIOS LEGACY
+                                </label>
+                                <br/>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="Useradd">
+                                    Add User
+                                </label>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="PowerHigh">
+                                    Power High Performance
+                                </label>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="FastBoot">
+                                    Fast Boot
+                                </label>
+                                <br/>
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" name="AllowReset">
+                                    Allow Reset Now
+                                </label>
+                            </div>
+                        </div>
+                    </div>
 
-						<div class="card">
-							<div class="card-header" role="tab" id="headingOne4">
-						        <a data-toggle="collapse" data-parent="#accordion4" href="#collapseOne4" aria-expanded="true" aria-controls="collapseOne4">ILO Power Action</a>
-						  	</div>
-						  	<div id="collapseOne4" class="collapse show" role="tabpanel" aria-labelledby="headingOne4">
-		 						<div class="card-block">
-		 							
-							    	<div class="dropdown">
-										<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									    Power Action
-										</button>
-										<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-										    <button class="dropdown-item" type="submit" formaction="/rebootquick">Press Quickly</button>
-										    <button class="dropdown-item" type="submit" formaction="/reboothold">Press and Hold</button>
-										    <button class="dropdown-item" type="submit" formaction="/reset">Reset </button>
-										</div>
-									</div>
-									</br>
-									Info : Power Action don't use Massive ILO Servers Definition.
-			 						Declare input in Single ILO Credential.
-								</div>
-						    </div>
-						</div>
-					</div>
-				</fieldset>
-			</div>
+                    <p>
+                        <br/>
+                        <button class="btn btn-outline-primary" type="submit" formaction="/send">Go</button>
+                        <button class="btn btn-outline-danger" type="reset">Reset</button>
+                    </p>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+
+                <div id="accordion4" role="tablist" aria-multiselectable="true">
+
+                    <div class="card">
+                        <div class="card-header" role="tab" id="headingOne4">
+                            <a data-toggle="collapse" data-parent="#accordion4" href="#collapseOne4"
+                               aria-expanded="true" aria-controls="collapseOne4">ILO Power Action</a>
+                        </div>
+                        <div id="collapseOne4" class="collapse show" role="tabpanel" aria-labelledby="headingOne4">
+                            <div class="card-block">
+
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                        Power Action
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <button class="dropdown-item" type="submit" formaction="/rebootquick">Press
+                                            Quickly
+                                        </button>
+                                        <button class="dropdown-item" type="submit" formaction="/reboothold">Press
+                                            and
+                                            Hold
+                                        </button>
+                                        <button class="dropdown-item" type="submit" formaction="/reset">Reset
+                                        </button>
+                                    </div>
+                                </div>
+                                <br/>
+                                Info : Power Action don't use Massive ILO Servers Definition.
+                                Declare input in Single ILO Credential.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+        <div>
+            <p>
+                <br/>
+                <button class="btn btn-outline-primary" id="launchInventory">Get Inventory
+                </button>
+            </p>
+            <div id="accordion5" role="tablist" aria-multiselectable="true">
+
+                <div class="card">
+                    <div class="card-header" role="tab" id="headingOne5">
+                        <a data-toggle="collapse" data-parent="#accordion5" href="#collapseOne5"
+                           aria-expanded="true"
+                           aria-controls="collapseOne4">Get Information</a>
+                    </div>
+                    <div id="collapseOne5" class="collapse show" role="tabpanel" aria-labelledby="headingOne5">
+                        <div class="card-block" id="resultInventory">
+                            MyInventory
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
 
 
 
 
-			<div class="col-md-10" style="text-align: left;">
-				<p>
-				</br>
-				<button class="btn btn-outline-primary" type="submit" formaction="/inventory">Get Inventory</button>
-				<p>
-				<div id="accordion5" role="tablist" aria-multiselectable="true">
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">Made by Somebody.</span>
+        </div>
+    </footer>
+</div>
 
-					<div class="card">
-						<div class="card-header" role="tab" id="headingOne5">
-					        <a data-toggle="collapse" data-parent="#accordion5" href="#collapseOne5" aria-expanded="true" aria-controls="collapseOne4">Get Information</a>
-						</div>
-						<div id="collapseOne5" class="collapse show" role="tabpanel" aria-labelledby="headingOne5">
-		 					<div class="card-block">
-								MyInventory
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			</br>
-
-			</form>
-			
-
-
-			<footer class="footer">
-	      		<div class="container">
-	        		<span class="text-muted">Made by Somebody.</span>
-	      		</div>
-   			</footer>
-		</div>
-
-	</body>
+</body>
+<script>
+    $("#launchInventory").click(function () {
+        $("#resultInventory").fadeTo(200, 0.5);
+        $.ajax({
+            type: "POST",
+            context: document.body,
+            url: "/inventory",
+            data: "ILOHostname=" + $("#ILO").val() + "&Username=" + $("#User").val() + "&Password=" + $("#Password").val()
+        }).done(function (data) {
+            $("#resultInventory").html(data).fadeTo(200, 1);
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            $("#resultInventory").html("AJAX error: " + textStatus + ' : ' + errorThrown).fadeTo(200, 1);
+        });
+    });
+</script>
 </html>

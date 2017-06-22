@@ -1,103 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-		<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-		
-		
+{{range .}}
+<div class="card-block">
+    Memory: {{.Memory}}
+    <br>
+    Cpu Number:{{.CPUNum}}
+    <br>
 
-		<style>
-			.table td, .table th { 
-				text-align: left; 
-			}
-			body {
-			text-shadow: none;
-			font-size: 10px;
-			}
+    CPU Model: {{.CPUModel}}
+    <br>
+    Model: {{.Model}}
+    <br>
+    SerialNumber: {{.SerialNumber}}
+    <br>
+    Health: {{.Health}}
+    <br>
+    PowerSetting: {{.Power}}
+    <br>
 
-			.btn {
-				font-size: 10px;
-			}
-			.dropdown-menu{
-			    font-size: 10px;
+</div>
 
-			}
-			.form-control {
-				font-size: 10px;
-			}
-		</style>
-	</head>
-
-	<body>
-
-		<div class="container">
-			<ul class="nav">
-				<li class="nav-item">
-					<a class="nav-link active" href="/index">Home</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link disabled"  href="#" target="_blank">Api</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#">Contact</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link active" href="/help">Help</a>
-				</li>
-			</ul>
-			</br>
-
-			<div class="col-md-6" style="text-align: left;" >
-				<h4>
-					RedFish Line
-				</h4>
-				<tr>
-				</tr>
-				</br>
-			</div>
-
-			<div class="col-md-8" style="text-align: left;" >
-				
-					
-				
-				<div class="card">
-					<div class="card-header">
-				    ILO Inventory
-				  	</div>
-				  	{{range .}}
-						<div class="card-block">
-				    	Memory: {{.Memory}}
-				    	<br>
-				    	Cpu Number:{{.CPUNum}}
-				    	<br>
-
-				    	CPU Model: {{.CPUModel}}
-				    	<br>
-				    	Model: {{.Model}}
-				    	<br>
-				    	SerialNumber: {{.SerialNumber}}
-				    	<br>
-				    	Health: {{.Health}}
-				    	<br>
-				    	PowerSetting: {{.Power}}
-				    	<br>
-
-				    </div>
-				</div>
-				<p>
-					{{end}}
+<p>
+    {{end}}
 
 
-
-			<footer class="footer">
-	      		<div class="container">
-	        		<span class="text-muted">Made by Somebody.</span>
-	      		</div>
-   			</footer>
-		</div>
-
-	</body>
-</html>
