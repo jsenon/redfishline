@@ -80,13 +80,13 @@
     </ul>
     <br/>
 
-    <div class="col-md-6" style="text-align: left;">
+
         <h4>
             RedFish Line
         </h4>
 
         <br/>
-    </div>
+
 
 
     <form method="POST" accept-charset="UTF-8" id="my_form">
@@ -94,60 +94,60 @@
 
         <legend>Server API Input</legend>
 
-                <div class="card" style="margin-bottom: 10px;">
-                    <ul class="nav nav-pills nav-fill">
-                        <li class="nav-item">
-                            <a href="#singleILO" aria-controls="singleILO" class="nav-link active" data-toggle="tab">Single
-                                ILO
-                                Credential</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#multipleILO" aria-controls="multipleILO" class="nav-link" data-toggle="tab">Massive
-                                ILO Servers Definition</a>
-                        </li>
-                    </ul>
+        <div class="card" style="margin-bottom: 10px;">
+            <ul class="nav nav-pills nav-fill">
+                <li class="nav-item">
+                    <a href="#singleILO" aria-controls="singleILO" class="nav-link active" data-toggle="tab">Single
+                        ILO
+                        Credential</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#multipleILO" aria-controls="multipleILO" class="nav-link" data-toggle="tab">Massive
+                        ILO Servers Definition</a>
+                </li>
+            </ul>
 
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="singleILO">
-                            <div class="container">
-                                <br />
-                                <div class="form-group">
+            <div class="tab-content">
+                <div class="tab-pane active" id="singleILO">
+                    <div class="container">
+                        <br/>
+                        <div class="form-group">
 
-                                    <div class="input-group">
-                                        <label class="sr-only">{{.Username}}</label>
-                                        <span class="input-group-addon" style="width: 90px;">User</span>
-                                        <input id="User" name="Username" type="text"
-                                               class="form-control" placeholder="Username"
-                                               aria-describedby="sizing-addon2">
-                                    </div>
-                                    <div class="input-group">
-                                        <label class="sr-only">{{.Password}}</label>
-                                        <span class="input-group-addon" style="width: 90px;">Password</span>
-                                        <input id="Password" name="Password" type="password" class="form-control"
-                                               placeholder="Password" aria-describedby="sizing-addon2">
-                                    </div>
-                                    <div class="input-group">
-                                        <label class="sr-only">{{.ILOHostname}}</label>
-                                        <span class="input-group-addon" style="width: 90px;">Host</span>
-                                        <input id="ILO" name="ILOHostname" type="text" class="form-control"
-                                               placeholder="ILOHostname" aria-describedby="sizing-addon2"
-                                               value={{.ILOHostname}}>
-                                    </div>
-
-
-                                </div>
+                            <div class="input-group">
+                                <label class="sr-only">{{.Username}}</label>
+                                <span class="input-group-addon" style="width: 90px;">User</span>
+                                <input id="User" name="Username" type="text"
+                                       class="form-control" placeholder="Username"
+                                       aria-describedby="sizing-addon2">
                             </div>
+                            <div class="input-group">
+                                <label class="sr-only">{{.Password}}</label>
+                                <span class="input-group-addon" style="width: 90px;">Password</span>
+                                <input id="Password" name="Password" type="password" class="form-control"
+                                       placeholder="Password" aria-describedby="sizing-addon2">
+                            </div>
+                            <div class="input-group">
+                                <label class="sr-only">{{.ILOHostname}}</label>
+                                <span class="input-group-addon" style="width: 90px;">Host</span>
+                                <input id="ILO" name="ILOHostname" type="text" class="form-control"
+                                       placeholder="ILOHostname" aria-describedby="sizing-addon2"
+                                       value={{.ILOHostname}}>
+                            </div>
+
+
                         </div>
+                    </div>
+                </div>
 
 
-                        <div class="tab-pane" id="multipleILO">
-                            <div class="card-block">
-                                <div class="form-group">
-                                    <label for="exampleTextarea">JSON Struct</label>
-                                    <textarea class="form-control" id="exampleTextarea" rows="3"
-                                              name="JSON"></textarea>
-                                </div>
-                                <pre>
+                <div class="tab-pane" id="multipleILO">
+                    <div class="card-block">
+                        <div class="form-group">
+                            <label for="exampleTextarea">JSON Struct</label>
+                            <textarea class="form-control" id="exampleTextarea" rows="3"
+                                      name="JSON"></textarea>
+                        </div>
+                        <pre>
 
 									<code class="language-json">
                                     [
@@ -166,12 +166,11 @@
 								</pre>
 
 
-                            </div>
-                        </div>
                     </div>
-
                 </div>
+            </div>
 
+        </div>
 
 
         <div class="row">
@@ -295,21 +294,24 @@
         </div>
     </footer>
 </div>
-
-</body>
 <script>
-    $("#launchInventory").click(function () {
-        $("#resultInventory").fadeTo(200, 0.5);
-        $.ajax({
-            type: "POST",
-            context: document.body,
-            url: "/inventory",
-            data: "ILOHostname=" + $("#ILO").val() + "&Username=" + $("#User").val() + "&Password=" + $("#Password").val()
-        }).done(function (data) {
-            $("#resultInventory").html(data).fadeTo(200, 1);
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-            $("#resultInventory").html("AJAX error: " + textStatus + ' : ' + errorThrown).fadeTo(200, 1);
+    $(document).ready(function() {
+        $("#launchInventory").click(function () {
+            $("#resultInventory").fadeTo(200, 0.5);
+            $.ajax({
+                type: "POST",
+                context: document.body,
+                url: "/inventory",
+                data: "ILOHostname=" + $("#ILO").val() + "&Username=" + $("#User").val() + "&Password=" + $("#Password").val()
+            }).done(function (data) {
+                $("#resultInventory").html(data).fadeTo(200, 1);
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                $("#resultInventory").html("AJAX error: " + textStatus + ' : ' + errorThrown).fadeTo(200, 1);
+            });
         });
     });
+
 </script>
+</body>
+
 </html>
