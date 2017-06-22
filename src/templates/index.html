@@ -59,19 +59,19 @@
             <a class="nav-link active" href="/help">Help</a>
         </li>
     </ul>
-    </br>
+    <br />
 
     <div class="col-md-6" style="text-align: left;">
         <h4>
             RedFish Line
         </h4>
-        <tr>
-        </tr>
-        </br>
+
+        <br />
     </div>
 
-    <div class="col-md-10" style="text-align: left;">
-        <form method="POST" accept-charset="UTF-8" id="my_form">
+
+    <form method="POST" accept-charset="UTF-8" id="my_form">
+        <div class="col-md-10" style="text-align: left;">
             <fieldset>
                 <legend>Server API Input</legend>
 
@@ -84,14 +84,14 @@
                                 Single ILO Credential </a>
                         </div>
                         <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-                            <div class="card-block" class="collapse">
+                            <div class="card-block collapse">
 
                                 <div class="form-inline">
 
                                     <div class="input-group">
                                         <label class="sr-only">{{.Username}}</label>
                                         <span class="input-group-addon" id="sizing-addon2">User</span>
-                                        <input id="User" name="Username" placeholder="User" type="text"
+                                        <input id="User" name="Username" type="text"
                                                class="form-control" placeholder="Username"
                                                aria-describedby="sizing-addon2">
                                     </div>
@@ -115,7 +115,7 @@
                         </div>
                     </div>
                 </div>
-                </br>
+                <br />
 
                 <div id="accordion2" role="tablist" aria-multiselectable="true">
 
@@ -154,7 +154,7 @@
                         </div>
                     </div>
                 </div>
-                </br>
+                <br />
                 <div id="accordion3" role="tablist" aria-multiselectable="true">
 
                     <div class="card">
@@ -173,7 +173,7 @@
                                     <input type="checkbox" class="form-check-input" name="Legacy">
                                     BIOS LEGACY
                                 </label>
-                                </br>
+                                <br />
                                 <label class="form-check-label">
                                     <input type="checkbox" class="form-check-input" name="Useradd">
                                     Add User
@@ -186,7 +186,7 @@
                                     <input type="checkbox" class="form-check-input" name="FastBoot">
                                     Fast Boot
                                 </label>
-                                </br>
+                                <br />
                                 <label class="form-check-label">
                                     <input type="checkbox" class="form-check-input" name="AllowReset">
                                     Allow Reset Now
@@ -196,7 +196,7 @@
                     </div>
                 </div>
                 <p>
-                    </br>
+                    <br />
                     <button class="btn btn-outline-primary" type="submit" formaction="/send">Go</button>
                     <button class="btn btn-outline-danger" type="reset">Reset</button>
                 </p>
@@ -227,7 +227,7 @@
                                         <button class="dropdown-item" type="submit" formaction="/reset">Reset</button>
                                     </div>
                                 </div>
-                                </br>
+                                <br />
                                 Info : Power Action don't use Massive ILO Servers Definition.
                                 Declare input in Single ILO Credential.
                             </div>
@@ -235,31 +235,32 @@
                     </div>
                 </div>
             </fieldset>
-        </form>
-    </div>
+
+        </div>
 
 
-    <div class="col-md-10" style="text-align: left;">
-        <p>
-            </br>
-            <button class="btn btn-outline-primary" id="launchInventory" formaction="/inventory">Get Inventory</button>
-        </p>
-        <div id="accordion5" role="tablist" aria-multiselectable="true">
+        <div class="col-md-10" style="text-align: left;">
+            <p>
+                <br />
+                <button class="btn btn-outline-primary" id="launchInventory" formaction="/inventory">Get Inventory
+                </button>
+            </p>
+            <div id="accordion5" role="tablist" aria-multiselectable="true">
 
-            <div class="card">
-                <div class="card-header" role="tab" id="headingOne5">
-                    <a data-toggle="collapse" data-parent="#accordion5" href="#collapseOne5" aria-expanded="true"
-                       aria-controls="collapseOne4">Get Information</a>
-                </div>
-                <div id="collapseOne5" class="collapse show" role="tabpanel" aria-labelledby="headingOne5">
-                    <div class="card-block" id="resultInventory">
-                        MyInventory
+                <div class="card">
+                    <div class="card-header" role="tab" id="headingOne5">
+                        <a data-toggle="collapse" data-parent="#accordion5" href="#collapseOne5" aria-expanded="true"
+                           aria-controls="collapseOne4">Get Information</a>
+                    </div>
+                    <div id="collapseOne5" class="collapse show" role="tabpanel" aria-labelledby="headingOne5">
+                        <div class="card-block" id="resultInventory">
+                            MyInventory
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    </br>
+        <br />
 
     </form>
 
@@ -281,11 +282,9 @@
             url: "inventory",
             data: "ILOHostname=" + $("#ILO").val() + "&Username=" + $("#User").val() + "&Password=" + $("#Password").val()
         }).done(function (data) {
-            $("#resultInventory").html(data);
-            $("#resultInventory").fadeTo(200, 1);
+            $("#resultInventory").html(data).fadeTo(200, 1);
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            $("#resultInventory").html("AJAX error: " + textStatus + ' : ' + errorThrown);
-            $("#resultInventory").fadeTo(200, 1);
+            $("#resultInventory").html("AJAX error: " + textStatus + ' : ' + errorThrown).fadeTo(200, 1);
         });
     });
 </script>
