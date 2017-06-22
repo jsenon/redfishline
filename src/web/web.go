@@ -1018,6 +1018,7 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	erro2 := json.Unmarshal([]byte(body2), &data2)
 	if erro2 != nil {
 	}
+
 	fmt.Println("Health>", data2["Status"]["Health"])
 
 }
