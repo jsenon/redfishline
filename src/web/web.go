@@ -994,7 +994,7 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	token := resp.Header.Get("x-auth-token")
 
 	// New Session
-	url2 := "https:///redfish/v1/Chassis/1/"
+	url2 := "https:///redfish/v1/Managers/1/"
 	req2, err := http.NewRequest("GET", url2, nil)
 	req2.Header.Set("X-Auth-Token", token)
 	fmt.Println("URL:>", url2)
