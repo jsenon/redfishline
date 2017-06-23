@@ -30,6 +30,14 @@ Access through favorite web browser on http://YOURIP:YOURPORT ie http://127.0.0.
 
 Auto Health Check API status available at /healthy/am-i-up
 
+### ScreenShot
+
+Single ILO Tab
+![Alt text](/img/SingleILO.png?raw=true "SingleILO")
+
+Massive ILO Tab Table View
+![Alt text](/img/MassiveILO.png?raw=true "MassiveILO")
+
 ### ToDo
 
 - [ ] Add Redfish API Call
