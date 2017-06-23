@@ -549,6 +549,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 	Username := req.FormValue("Username")
 	Password := req.FormValue("Password")
 	JSON := req.FormValue("JSON")
+	fmt.Println("JSON>", JSON)
 
 	// Error if JSON not exist and Hostname provided
 	if JSON == "" && ILOHostname == "" {
@@ -572,23 +573,22 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 			fmt.Println("Error: ", err)
 		}
 
+		fmt.Println("Unmarshal>", s)
+
 		// Loop on all node in config file json and store information in Server struct ILODefinition
+
+		// Loop on s
 		for i := range s {
-			Servers = append(Servers, ILODefinition{
 
-				ILOHostname: s[i].ILOHostname,
-				Username:    s[i].Username,
-				Password:    s[i].Password,
-			})
-		}
+			fmt.Println("ILOHostname: ", s[i].ILOHostname)
 
-		// Loop on Servers
-		for i := range Servers {
-
-			url := "https://" + Servers[i].ILOHostname + "/redfish/v1/SessionService/Sessions/"
+			url := "https://" + s[i].ILOHostname + "/redfish/v1/SessionService/Sessions/"
 			// Retrieve X-Auth-Token
 			// Create my Body
-			jsonStr := Credential{Username, Password}
+			jsonStr := Credential{s[i].Username, s[i].Password}
+
+			fmt.Println("jsonstr: ", jsonStr)
+
 			theJson, _ := json.Marshal(jsonStr)
 
 			// Disable self certificate check
@@ -614,14 +614,14 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 			// Retrieve x-auth-token
 			token := resp.Header.Get("x-auth-token")
 
-			url2 := "https://" + Servers[i].ILOHostname + "/redfish/v1/Systems/1/"
+			url2 := "https://" + s[i].ILOHostname + "/redfish/v1/Systems/1/"
 			req2, err2 := http.NewRequest("GET", url2, nil)
 			client2 := &http.Client{Transport: tr}
 			req2.Header.Set("X-Auth-Token", token)
 			req2.Header.Set("Content-Type", "application/json")
 			resp2, err2 := client2.Do(req2)
 			if err2 != nil {
-				fmt.Println("Error: ", err)
+				fmt.Println("Error URL Creation: ", err)
 				// http.Redirect(res, req, "/index", http.StatusSeeOther)
 				return
 			}
@@ -629,20 +629,20 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 
 			// BIOS
 
-			url3 := "https://" + Servers[i].ILOHostname + "/redfish/v1/Systems/1/Bios/"
+			url3 := "https://" + s[i].ILOHostname + "/redfish/v1/Systems/1/Bios/"
 			req3, err3 := http.NewRequest("GET", url3, nil)
 			client3 := &http.Client{Transport: tr}
 			req3.Header.Set("X-Auth-Token", token)
 			req3.Header.Set("Content-Type", "application/json")
 			resp3, err3 := client3.Do(req3)
 			if err3 != nil {
-				fmt.Println("Error: ", err)
+				fmt.Println("Error URL Creation BIOS: ", err)
 				// http.Redirect(res, req, "/index", http.StatusSeeOther)
 				return
 			}
 			body10, _ := ioutil.ReadAll(resp3.Body)
 
-			url4 := "https://" + Servers[i].ILOHostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
+			url4 := "https://" + s[i].ILOHostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
 			req4, err4 := http.NewRequest("GET", url4, nil)
 			client4 := &http.Client{Transport: tr}
 			req4.Header.Set("X-Auth-Token", token)
@@ -676,6 +676,10 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 				Power:        data3["PowerRegulator"].(string),
 			})
 		}
+		fmt.Println("myinventory: ", myinventory)
+		req.ParseForm()
+		t, _ := template.ParseFiles("templates/inventory.html")
+		t.Execute(res, myinventory)
 
 	} else {
 
@@ -773,8 +777,6 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 			Health:       data["Status"]["Health"].(string),
 			Power:        data3["PowerRegulator"].(string),
 		})
-
-		// Massive
 
 		req.ParseForm()
 		t, _ := template.ParseFiles("templates/inventory.html")

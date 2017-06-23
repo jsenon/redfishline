@@ -90,19 +90,19 @@
 
 
     <form method="POST" accept-charset="UTF-8" id="my_form">
-        <input type="hidden" name="type" value="single" id="envoiMonType" name="envoiMonType">
+        <input type="hidden" name="type" value="single" id="sendmytype" name="sendmytype">
 
         <legend>Server API Input</legend>
 
         <div class="card" style="margin-bottom: 10px;">
             <ul class="nav nav-pills nav-fill">
                 <li class="nav-item">
-                    <a href="#singleILO" aria-controls="singleILO" class="nav-link active switchType" data-toggle="tab"  data-monType="single">Single
+                    <a href="#singleILO" aria-controls="singleILO" class="nav-link active switchType" data-toggle="tab"  data-myType="single">Single
                         ILO
                         Credential</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#multipleILO" aria-controls="multipleILO" class="nav-link switchType" data-toggle="tab" data-monType="multiple">Massive
+                    <a href="#multipleILO" aria-controls="multipleILO" class="nav-link switchType" data-toggle="tab" data-myType="multiple">Massive
                         ILO Servers Definition</a>
                 </li>
             </ul>
@@ -150,18 +150,18 @@
                         <pre>
 
 									<code class="language-json">
-                                    [
-                                        {
-                                            "ILOHostname": "MyNode",
-                                            "Username": "MyUser",
-                                            "Password": "MyPassword"
-                                        },
-                                        {
-                                            "ILOHostname": "MyNode2",
-                                            "Username": "MyUser",
-                                            "Password": "MyPassword"
-                                        }
-                                    ]
+[
+  {
+    "ILOHostname": "MyNode",
+    "Username": "MyUser",
+    "Password": "MyPassword"
+  },
+  {
+    "ILOHostname": "MyNode2",
+    "Username": "MyUser",
+    "Password": "MyPassword"
+  }
+]
 									</code>
 								</pre>
 
@@ -297,13 +297,18 @@
 <script>
     $(document).ready(function() {
         console.log('Document ready');
+      
+
         $("#launchInventory").click(function () {
             $("#resultInventory").fadeTo(200, 0.5);
+            console.log('Serialize');
+            var str = $('#my_form').serialize();
+            console.log('Serialize ' + str);
             $.ajax({
                 type: "POST",
                 context: document.body,
                 url: "/inventory",
-                data: "ILOHostname=" + $("#ILO").val() + "&Username=" + $("#User").val() + "&Password=" + $("#Password").val()
+                data: str
             }).done(function (data) {
                 $("#resultInventory").html(data).fadeTo(200, 1);
             }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -311,11 +316,11 @@
             });
         });
         $(".switchType").click(function() {
-            console.log('Un click');
-            var montype = $(this).attr('data-monType');
-            console.log('Nouvelle valeur = ' + montype);
-            alert('Nouvelle valeur ' + montype);
-            $("#envoiMonType").val(montype);
+            console.log('One Click');
+            var myType = $(this).attr('data-myType');
+            console.log('New Value = ' + myType);
+            // alert('New Value ' + myType);
+            $("#sendmytype").val(myType);
         });
     });
 
