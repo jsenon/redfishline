@@ -1041,10 +1041,10 @@ func SerializeSend(res http.ResponseWriter, req *http.Request) {
 	fmt.Println("MyPassword> ", MyPassword)
 
 	jsonStr := ILODefinition{MyUser, MyPassword, MyHost}
-	theJson, _ := json.MarshalIndent(jsonStr, "", "    ")
+	// theJson, _ := json.MarshalIndent(jsonStr, "", "    ")
+	theJson, _ := json.Marshal(jsonStr)
 
 	fmt.Println("theJson> ", string(theJson))
-	fmt.Println("jsonStr> ", jsonStr)
 
 	req.ParseForm()
 	t, _ := template.ParseFiles("templates/result.html")
