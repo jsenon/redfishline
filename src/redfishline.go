@@ -48,6 +48,8 @@ func main() {
 	r.HandleFunc("/reset", web.Reset)
 
 	r.HandleFunc("/debug", web.Debug)
+	r.HandleFunc("/serialize", web.Serialize)
+	r.HandleFunc("/serializesend", web.SerializeSend)
 
 	// Static dir
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("templates/static/"))))

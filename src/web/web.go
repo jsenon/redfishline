@@ -1023,3 +1023,31 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	fmt.Println("Health>", data2["Status"]["Health"])
 
 }
+
+func Serialize(res http.ResponseWriter, req *http.Request) {
+	t, _ := template.ParseFiles("templates/debug.html")
+	t.Execute(res, req)
+}
+
+func SerializeSend(res http.ResponseWriter, req *http.Request) {
+
+	req.ParseForm()
+	MyHost := req.FormValue("MyHost")
+	MyUser := req.FormValue("MyUser")
+	MyPassword := req.FormValue("MyPassword")
+
+	fmt.Println("MyHost> ", MyHost)
+	fmt.Println("MyUser> ", MyUser)
+	fmt.Println("MyPassword> ", MyPassword)
+
+	jsonStr := ILODefinition{MyUser, MyPassword, MyHost}
+	theJson, _ := json.MarshalIndent(jsonStr, "  ", "    ")
+
+	fmt.Println("theJson> ", string(theJson))
+	fmt.Println("jsonStr> ", jsonStr)
+
+	req.ParseForm()
+	t, _ := template.ParseFiles("templates/result.html")
+	t.Execute(res, string(theJson))
+
+}
