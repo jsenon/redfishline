@@ -1041,7 +1041,7 @@ func SerializeSend(res http.ResponseWriter, req *http.Request) {
 	fmt.Println("MyPassword> ", MyPassword)
 
 	jsonStr := ILODefinition{MyUser, MyPassword, MyHost}
-	theJson, _ := json.MarshalIndent(jsonStr, "  ", "    ")
+	theJson, _ := json.MarshalIndent(jsonStr, "", "    ")
 
 	fmt.Println("theJson> ", string(theJson))
 	fmt.Println("jsonStr> ", jsonStr)
