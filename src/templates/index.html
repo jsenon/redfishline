@@ -56,8 +56,16 @@
 
         .fullheight {
             height: 100%;
-
         }
+
+        .ajax-loader {
+            margin: 0 auto;
+            display: block;
+        }
+        #accordion5 {
+            display: none;
+        }
+
     </style>
 </head>
 
@@ -279,7 +287,8 @@
                 </div>
                 <div id="collapseOne5" class="collapse show" role="tabpanel" aria-labelledby="headingOne5">
                     <div class="card-block" id="resultInventory">
-                        MyInventory
+                        <!-- MyInventory -->
+                        <!-- <img class="ajax-loader" src="default.gif" /> -->
                     </div>
                 </div>
             </div>
@@ -297,28 +306,24 @@
 <script>
     $(document).ready(function() {
         console.log('Document ready');
-      
 
         $("#launchInventory").click(function () {
-            $("#resultInventory").fadeTo(200, 0.5);
-            console.log('Serialize');
+            $("#accordion5").fadeIn(1000);
+            $("#resultInventory").html('<img class="ajax-loader" src="default.gif" />');
             var str = $('#my_form').serialize();
-            console.log('Serialize ' + str);
             $.ajax({
                 type: "POST",
                 context: document.body,
                 url: "/inventory",
                 data: str
             }).done(function (data) {
-                $("#resultInventory").html(data).fadeTo(200, 1);
+                $("#resultInventory").html(data);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                $("#resultInventory").html("AJAX error: " + textStatus + ' : ' + errorThrown).fadeTo(200, 1);
+                $("#resultInventory").html("AJAX error: " + textStatus + ' : ' + errorThrown);
             });
         });
         $(".switchType").click(function() {
-            console.log('One Click');
             var myType = $(this).attr('data-myType');
-            console.log('New Value = ' + myType);
             // alert('New Value ' + myType);
             $("#sendmytype").val(myType);
         });
