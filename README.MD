@@ -39,5 +39,9 @@ Auto Health Check API status available at /healthy/am-i-up
 - [ ] Build Docker App
 - [x] Add API monitoring
 - [x] Power Action
+- [x] Massive Inventory Retrieval
+- [ ] Inventory MacAdress
+- [ ] Power State
+- [ ] Raid Configuration
 - [ ] Integration with cloudtab project
 - [ ] Firmware update

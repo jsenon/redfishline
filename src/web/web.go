@@ -13,15 +13,10 @@
 //     License: MIT http://opensource.org/licenses/MIT
 //     Contact: Julien SENON <julien.senon@gmail.com>
 
-//     	"url" => "redfish/v1/Systems/1/Bios/Settings/", PATCH, {"BootMode": "LegacyBios"}
-//		"url" => "redfish/v1/Systems/1/Bios/Settings/", PATCH, {"PowerProfile": "MaxPerf"}
-//		"url" => "redfish/v1/Systems/1/", POST, {"Action": "Reset", "ResetType": "On"}
-// 		"url" => "redfish/v1/Systems/1/", POST, {"Action": "Reset", "ResetType": "ForceRestart"}
-// 		"url" => "redfish/v1/Systems/1/", POST, {"Action": "PowerButton", "PushType": "Press", "Target": "/Oem/Hp"}
-// 		"url" => "redfish/v1/Systems/1/", POST, {"Action": "PowerButton", "PushType": "PressAndHold", "Target": "/Oem/Hp"}
 //      Inventory Mac /redfish/v1/Systems/1/NetworkAdapters/
 //      PowerState /redfish/v1/Systems/1/
 //      Raid /redfish/v1/Systems/1/SmartStorage/ https://10.67.224.5/redfish/v1/Systems/1/SmartStorage/ArrayControllers/0/LogicalDrives/
+//
 //
 //      With Help of @Merrick28
 
