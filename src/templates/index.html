@@ -90,19 +90,19 @@
 
 
     <form method="POST" accept-charset="UTF-8" id="my_form">
-
+        <input type="hidden" name="type" value="single" id="envoiMonType" name="envoiMonType">
 
         <legend>Server API Input</legend>
 
         <div class="card" style="margin-bottom: 10px;">
             <ul class="nav nav-pills nav-fill">
                 <li class="nav-item">
-                    <a href="#singleILO" aria-controls="singleILO" class="nav-link active" data-toggle="tab">Single
+                    <a href="#singleILO" aria-controls="singleILO" class="nav-link active switchType" data-toggle="tab"  data-monType="single">Single
                         ILO
                         Credential</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#multipleILO" aria-controls="multipleILO" class="nav-link" data-toggle="tab">Massive
+                    <a href="#multipleILO" aria-controls="multipleILO" class="nav-link switchType" data-toggle="tab" data-monType="multiple">Massive
                         ILO Servers Definition</a>
                 </li>
             </ul>
@@ -296,6 +296,7 @@
 </div>
 <script>
     $(document).ready(function() {
+        console.log('Document ready');
         $("#launchInventory").click(function () {
             $("#resultInventory").fadeTo(200, 0.5);
             $.ajax({
@@ -308,6 +309,13 @@
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 $("#resultInventory").html("AJAX error: " + textStatus + ' : ' + errorThrown).fadeTo(200, 1);
             });
+        });
+        $(".switchType").click(function() {
+            console.log('Un click');
+            var montype = $(this).attr('data-monType');
+            console.log('Nouvelle valeur = ' + montype);
+            alert('Nouvelle valeur ' + montype);
+            $("#envoiMonType").val(montype);
         });
     });
 
