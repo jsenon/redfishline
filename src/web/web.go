@@ -997,6 +997,7 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
+	session := resp.Header.Get("location")
 
 	// New Session
 	url2 := "https://xxxxxx/redfish/v1/Systems/1/NetworkAdapters"
@@ -1019,7 +1020,6 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	if erro2 != nil {
 		fmt.Println("Error: ", erro2)
 		panic(erro2)
-		return
 	}
 
 	// Go to definition needed. Don t use .(string) assertion at the end
@@ -1036,6 +1036,17 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	for i := 0; i < s.Len(); i++ {
 		fmt.Println("loop:", f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[i].(map[string]interface{})["href"])
 	}
+
+	// Close session
+	req3, err := http.NewRequest("DELETE", session, nil)
+	req3.Header.Set("X-Auth-Token", token)
+	resp3, err3 := client2.Do(req3)
+	if err3 != nil {
+		panic(err3)
+	}
+	defer resp3.Body.Close()
+	defer client2.Do(req3)
+
 }
 
 func Serialize(res http.ResponseWriter, req *http.Request) {
