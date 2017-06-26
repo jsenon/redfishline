@@ -49,7 +49,7 @@ Massive ILO Tab Table View
 - [x] Power Action
 - [x] Massive Inventory Retrieval
 - [ ] Inventory MacAdress
-- [ ] Power State
+- [x] Power State
 - [ ] Raid Configuration
 - [ ] Integration with cloudtab project
 - [ ] Firmware update

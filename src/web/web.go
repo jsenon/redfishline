@@ -55,6 +55,7 @@ type InventoryServer struct {
 	SerialNumber string  `json:"SerialNumber"`
 	Health       string  `json:"Health"`
 	Power        string  `json:"Power"`
+	PowerState   string  `json:"PowerState"`
 }
 
 // Multiple Server input
@@ -672,6 +673,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 				SerialNumber: data2["SerialNumber"].(string),
 				Health:       data["Status"]["Health"].(string),
 				Power:        data3["PowerRegulator"].(string),
+				PowerState:   data2["PowerState"].(string),
 			})
 		}
 		fmt.Println("myinventory: ", myinventory)
@@ -774,6 +776,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 			SerialNumber: data2["SerialNumber"].(string),
 			Health:       data["Status"]["Health"].(string),
 			Power:        data3["PowerRegulator"].(string),
+			PowerState:   data2["PowerState"].(string),
 		})
 
 		req.ParseForm()
