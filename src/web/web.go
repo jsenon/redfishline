@@ -30,6 +30,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 )
 
 type ILODefinition struct {
@@ -965,10 +966,10 @@ func Help(res http.ResponseWriter, req *http.Request) {
 }
 
 func Debug(res http.ResponseWriter, req *http.Request) {
-	url := "https:///redfish/v1/SessionService/Sessions/"
+	url := "https://xxxx/redfish/v1/SessionService/Sessions/"
 	fmt.Println("URL:>", url)
 
-	var jsonStr = []byte(`{"UserName":"","Password":""}`)
+	var jsonStr = []byte(`{"UserName":"openstack","Password":"Airbus2K16"}`)
 	fmt.Println("Body:>", jsonStr)
 
 	// Disable self certificate check
@@ -998,7 +999,7 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	token := resp.Header.Get("x-auth-token")
 
 	// New Session
-	url2 := "https:///redfish/v1/Managers/1/"
+	url2 := "https://xxxxxx/redfish/v1/Systems/1/NetworkAdapters"
 	req2, err := http.NewRequest("GET", url2, nil)
 	req2.Header.Set("X-Auth-Token", token)
 	fmt.Println("URL:>", url2)
@@ -1008,23 +1009,33 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 		panic(err2)
 	}
 	defer resp2.Body.Close()
-	fmt.Println("response Status:", resp2.Status)
-	fmt.Println("response Headers:", resp2.Header)
 	body2, _ := ioutil.ReadAll(resp2.Body)
-	fmt.Println("response Body:", string(body2))
-	var data map[string]interface{}
-	var data2 map[string]map[string]interface{}
-	erro := json.Unmarshal([]byte(body2), &data)
-	if erro != nil {
-		panic(err)
-	}
-	fmt.Println("Model>", data["Model"])
-	erro2 := json.Unmarshal([]byte(body2), &data2)
+
+	// Create Interface for parsing
+	var f interface{}
+
+	// Unmarshal json with interface
+	erro2 := json.Unmarshal([]byte(body2), &f)
 	if erro2 != nil {
+		fmt.Println("Error: ", erro2)
+		panic(erro2)
+		return
 	}
 
-	fmt.Println("Health>", data2["Status"]["Health"])
+	// Go to definition needed. Don t use .(string) assertion at the end
+	fmt.Println("f:", f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[1].(map[string]interface{})["href"])
 
+	// Store Value of links/Member
+	l := f.(map[string]interface{})["links"].(map[string]interface{})["Member"]
+
+	// Use reflect to store value of interface
+	// ValueOf returns a new Value initialized to the concrete value stored in the interface l
+	s := reflect.ValueOf(l)
+
+	// Range over all Member value
+	for i := 0; i < s.Len(); i++ {
+		fmt.Println("loop:", f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[i].(map[string]interface{})["href"])
+	}
 }
 
 func Serialize(res http.ResponseWriter, req *http.Request) {

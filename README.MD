@@ -53,3 +53,4 @@ Massive ILO Tab Table View
 - [ ] Raid Configuration
 - [ ] Integration with cloudtab project
 - [ ] Firmware update
+- [ ] Closed session
