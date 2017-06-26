@@ -65,6 +65,12 @@ type InventoryMac struct {
 	Mac      []string `json:"Mac"`
 }
 
+type AccountILO struct {
+	UserName  string `json:"UserName"`
+	Password  string `json:"Password"`
+	LoginName string `json:"LoginName"`
+}
+
 // Multiple Server input
 var Servers []ILODefinition
 
@@ -231,6 +237,11 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 			if Useradd == "on" {
 				fmt.Println("------> Launch MASSIVE API Useradd on", Servers[i].ILOHostname)
+				err := AddUser(token, Servers[i].ILOHostname)
+				if err != nil {
+					fmt.Println("Error Creation User")
+				}
+
 			}
 			if PowerHigh == "on" {
 				fmt.Println("------> Launch MASSIVE API PowerHigh on", Servers[i].ILOHostname)
@@ -426,6 +437,10 @@ func Send(res http.ResponseWriter, req *http.Request) {
 		if Useradd == "on" {
 			fmt.Println("------> Launch API Useradd")
 			// Need to unscope to Administrator and retrieve token instead of openstack user
+			err := AddUser(token, ILOHostname)
+			if err != nil {
+				fmt.Println("Error Creation User")
+			}
 
 		}
 		if PowerHigh == "on" {
@@ -972,6 +987,38 @@ func Help(res http.ResponseWriter, req *http.Request) {
 }
 
 func Debug(res http.ResponseWriter, req *http.Request) {
+	// My debug
+
+	var jsonStr2 = []byte(`{
+   "UserName":"",
+   "Password":"",
+   "Oem":{
+      "Hp":{
+         "Privileges":{
+            "RemoteConsolePriv":true,
+            "VirtualMediaPriv":true,
+            "UserConfigPriv":true,
+            "iLOConfigPriv":true,
+            "VirtualPowerAndResetPriv":true
+         },
+         "LoginName":""
+      }
+   }
+}`)
+
+	fmt.Println("json", string(jsonStr2))
+
+	sheetData, _ := ioutil.ReadFile("../credential-ilo.json")
+	myaccount := AccountILO{}
+	err3 := json.Unmarshal(sheetData, &myaccount)
+	if err3 != nil {
+		fmt.Println("Error: ", err3)
+	}
+
+	fmt.Println("newJson", myaccount)
+
+	// Mydebu end
+
 	url := "https://xxxx/redfish/v1/SessionService/Sessions/"
 	fmt.Println("URL:>", url)
 
@@ -1081,4 +1128,51 @@ func SerializeSend(res http.ResponseWriter, req *http.Request) {
 	t, _ := template.ParseFiles("templates/result.html")
 	t.Execute(res, string(theJson))
 
+}
+
+func AddUser(token string, hostname string) error {
+
+	fmt.Println("------> Launch API Add User")
+	// Launch API adding user
+
+	url := "https://" + hostname + "/redfish/v1/AccountService/Accounts"
+
+	var jsonStr = []byte(`{
+	"UserName": "",
+	"Password": "",
+	"Oem": {
+			"Hp": {
+				"Privileges": {
+					"RemoteConsolePriv": true,
+					"VirtualMediaPriv": true,
+					"UserConfigPriv": true,
+					"iLOConfigPriv": true,
+					"VirtualPowerAndResetPriv": true
+				},
+				"LoginName": ""
+			}
+		}
+	}`)
+
+	fmt.Println("json", jsonStr)
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		fmt.Println("Error API")
+	}
+	// Disable self certificate check
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+	req.Header.Set("X-Auth-Token", token)
+	req.Header.Set("Content-Type", "application/json")
+	_, err2 := client.Do(req)
+	if err2 != nil {
+		fmt.Println("Error: ", err2)
+		// http.Redirect(res, req, "/index", http.StatusSeeOther)
+		return err2
+	}
+	// body9, _ := ioutil.ReadAll(resp.Body)
+	return err2
 }
