@@ -48,15 +48,21 @@ type Credential struct {
 }
 
 type InventoryServer struct {
-	Hostname     string  `json:"Hostname"`
-	Memory       float64 `json:"Memory"`
-	CPUNum       float64 `json:"CPUNum"`
-	CPUModel     string  `json:"CPUModel"`
-	Model        string  `json:"Model"`
-	SerialNumber string  `json:"SerialNumber"`
-	Health       string  `json:"Health"`
-	Power        string  `json:"Power"`
-	PowerState   string  `json:"PowerState"`
+	Hostname     string         `json:"Hostname"`
+	Memory       float64        `json:"Memory"`
+	CPUNum       float64        `json:"CPUNum"`
+	CPUModel     string         `json:"CPUModel"`
+	Model        string         `json:"Model"`
+	SerialNumber string         `json:"SerialNumber"`
+	Health       string         `json:"Health"`
+	Power        string         `json:"Power"`
+	PowerState   string         `json:"PowerState"`
+	MacInfo      []InventoryMac `json:"MacInfo"`
+}
+
+type InventoryMac struct {
+	CardName string   `json:"CardName"`
+	Mac      []string `json:"Mac"`
 }
 
 // Multiple Server input
