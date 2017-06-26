@@ -65,6 +65,7 @@ type InventoryMac struct {
 	Mac      []string `json:"Mac"`
 }
 
+// DRAFT
 type AccountILO struct {
 	UserName  string `json:"UserName"`
 	Password  string `json:"Password"`
@@ -987,35 +988,35 @@ func Help(res http.ResponseWriter, req *http.Request) {
 }
 
 func Debug(res http.ResponseWriter, req *http.Request) {
-	// My debug
+	// 	// My debug
 
-	var jsonStr2 = []byte(`{
-   "UserName":"",
-   "Password":"",
-   "Oem":{
-      "Hp":{
-         "Privileges":{
-            "RemoteConsolePriv":true,
-            "VirtualMediaPriv":true,
-            "UserConfigPriv":true,
-            "iLOConfigPriv":true,
-            "VirtualPowerAndResetPriv":true
-         },
-         "LoginName":""
-      }
-   }
-}`)
+	// 	var jsonStr2 = []byte(`{
+	//    "UserName":"",
+	//    "Password":"",
+	//    "Oem":{
+	//       "Hp":{
+	//          "Privileges":{
+	//             "RemoteConsolePriv":true,
+	//             "VirtualMediaPriv":true,
+	//             "UserConfigPriv":true,
+	//             "iLOConfigPriv":true,
+	//             "VirtualPowerAndResetPriv":true
+	//          },
+	//          "LoginName":""
+	//       }
+	//    }
+	// }`)
 
-	fmt.Println("json", string(jsonStr2))
+	// 	fmt.Println("json", string(jsonStr2))
 
-	sheetData, _ := ioutil.ReadFile("../credential-ilo.json")
-	myaccount := AccountILO{}
-	err3 := json.Unmarshal(sheetData, &myaccount)
-	if err3 != nil {
-		fmt.Println("Error: ", err3)
-	}
+	// 	sheetData, _ := ioutil.ReadFile("../credential-ilo.json")
+	// 	myaccount := AccountILO{}
+	// 	err3 := json.Unmarshal(sheetData, &myaccount)
+	// 	if err3 != nil {
+	// 		fmt.Println("Error: ", err3)
+	// 	}
 
-	fmt.Println("newJson", myaccount)
+	// 	fmt.Println("newJson", myaccount)
 
 	// Mydebu end
 
