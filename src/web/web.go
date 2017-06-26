@@ -969,7 +969,7 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	url := "https://xxxx/redfish/v1/SessionService/Sessions/"
 	fmt.Println("URL:>", url)
 
-	var jsonStr = []byte(`{"UserName":"openstack","Password":"Airbus2K16"}`)
+	var jsonStr = []byte(`{"UserName":"","Password":""}`)
 	fmt.Println("Body:>", jsonStr)
 
 	// Disable self certificate check
