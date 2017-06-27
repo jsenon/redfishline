@@ -65,11 +65,23 @@ type InventoryMac struct {
 	Mac      []string `json:"Mac"`
 }
 
-// DRAFT
+// Structure to create an account
 type AccountILO struct {
 	UserName  string `json:"UserName"`
 	Password  string `json:"Password"`
 	LoginName string `json:"LoginName"`
+	Oem       struct {
+		Hp struct {
+			LoginName  string `json:"LoginName"`
+			Privileges struct {
+				RemoteConsolePriv        bool `json:"RemoteConsolePriv"`
+				VirtualMediaPriv         bool `json:"VirtualMediaPriv"`
+				UserConfigPriv           bool `json:"UserConfigPriv"`
+				iLOConfigPriv            bool `json:"iLOConfigPriv"`
+				VirtualPowerAndResetPriv bool `json:"VirtualPowerAndResetPriv"`
+			} `json:"Privileges"`
+		} `json:"Hp"`
+	} `json:"Oem"`
 }
 
 // Multiple Server input
@@ -185,6 +197,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 
 			// Retrieve x-auth-token
 			token := resp.Header.Get("x-auth-token")
+			session := resp.Header.Get("location")
 
 			url2 := "https://" + Servers[i].ILOHostname + "/redfish/v1/Systems/1/Bios/Settings/"
 			jsonStr2 := []byte(`{"BootMode":""}`)
@@ -348,6 +361,15 @@ func Send(res http.ResponseWriter, req *http.Request) {
 				}
 
 			}
+			// Close session
+			req5, err := http.NewRequest("DELETE", session, nil)
+			req5.Header.Set("X-Auth-Token", token)
+			resp5, err5 := client2.Do(req5)
+			if err5 != nil {
+				panic(err5)
+			}
+			defer resp5.Body.Close()
+			defer client2.Do(req5)
 		}
 
 	} else {
@@ -382,6 +404,7 @@ func Send(res http.ResponseWriter, req *http.Request) {
 
 		// Retrieve x-auth-token
 		token := resp.Header.Get("x-auth-token")
+		session := resp.Header.Get("location")
 
 		url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/Bios/Settings/"
 		jsonStr2 := []byte(`{"BootMode":""}`)
@@ -542,6 +565,15 @@ func Send(res http.ResponseWriter, req *http.Request) {
 			}
 
 		}
+		// Close session
+		req5, err := http.NewRequest("DELETE", session, nil)
+		req5.Header.Set("X-Auth-Token", token)
+		resp5, err5 := client2.Do(req5)
+		if err5 != nil {
+			panic(err5)
+		}
+		defer resp5.Body.Close()
+		defer client2.Do(req5)
 
 	}
 
@@ -635,6 +667,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 
 			// Retrieve x-auth-token
 			token := resp.Header.Get("x-auth-token")
+			session := resp.Header.Get("location")
 
 			url2 := "https://" + s[i].ILOHostname + "/redfish/v1/Systems/1/"
 			req2, err2 := http.NewRequest("GET", url2, nil)
@@ -698,6 +731,15 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 				Power:        data3["PowerRegulator"].(string),
 				PowerState:   data2["PowerState"].(string),
 			})
+			// Close session
+			req5, err := http.NewRequest("DELETE", session, nil)
+			req5.Header.Set("X-Auth-Token", token)
+			resp5, err5 := client2.Do(req5)
+			if err5 != nil {
+				panic(err5)
+			}
+			defer resp5.Body.Close()
+			defer client2.Do(req5)
 		}
 		fmt.Println("myinventory: ", myinventory)
 		req.ParseForm()
@@ -738,6 +780,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 
 		// Retrieve x-auth-token
 		token := resp.Header.Get("x-auth-token")
+		session := resp.Header.Get("location")
 
 		url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
 		req2, err2 := http.NewRequest("GET", url2, nil)
@@ -806,6 +849,16 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 		t, _ := template.ParseFiles("templates/inventory.html")
 		t.Execute(res, myinventory)
 
+		// Close session
+		req5, err := http.NewRequest("DELETE", session, nil)
+		req5.Header.Set("X-Auth-Token", token)
+		resp5, err5 := client2.Do(req5)
+		if err5 != nil {
+			panic(err5)
+		}
+		defer resp5.Body.Close()
+		defer client2.Do(req5)
+
 	}
 
 }
@@ -850,6 +903,7 @@ func Rebootquick(res http.ResponseWriter, req *http.Request) {
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
+	session := resp.Header.Get("location")
 
 	url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
 	jsonStr2 := []byte(`{"Action": "PowerButton", "PushType": "Press", "Target": "/Oem/Hp"}`)
@@ -863,7 +917,16 @@ func Rebootquick(res http.ResponseWriter, req *http.Request) {
 		// http.Redirect(res, req, "/index", http.StatusSeeOther)
 		return
 	}
-	// body2, _ := ioutil.ReadAll(resp2.Body)
+
+	// Close session
+	req3, err := http.NewRequest("DELETE", session, nil)
+	req3.Header.Set("X-Auth-Token", token)
+	resp3, err3 := client2.Do(req3)
+	if err3 != nil {
+		panic(err3)
+	}
+	defer resp3.Body.Close()
+	defer client2.Do(req3)
 
 }
 
@@ -908,6 +971,7 @@ func Reboothold(res http.ResponseWriter, req *http.Request) {
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
+	session := resp.Header.Get("location")
 
 	url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
 	jsonStr2 := []byte(`{"Action": "PowerButton", "PushType": "PressAndHold", "Target": "/Oem/Hp"}`)
@@ -921,8 +985,15 @@ func Reboothold(res http.ResponseWriter, req *http.Request) {
 		// http.Redirect(res, req, "/index", http.StatusSeeOther)
 		return
 	}
-	// body2, _ := ioutil.ReadAll(resp2.Body)
-
+	// Close session
+	req3, err := http.NewRequest("DELETE", session, nil)
+	req3.Header.Set("X-Auth-Token", token)
+	resp3, err3 := client2.Do(req3)
+	if err3 != nil {
+		panic(err3)
+	}
+	defer resp3.Body.Close()
+	defer client2.Do(req3)
 }
 
 func Reset(res http.ResponseWriter, req *http.Request) {
@@ -965,6 +1036,7 @@ func Reset(res http.ResponseWriter, req *http.Request) {
 
 	// Retrieve x-auth-token
 	token := resp.Header.Get("x-auth-token")
+	session := resp.Header.Get("location")
 
 	url2 := "https://" + ILOHostname + "/redfish/v1/Systems/1/"
 	jsonStr2 := []byte(`{"Action": "Reset", "ResetType": "ForceRestart"}`)
@@ -978,8 +1050,15 @@ func Reset(res http.ResponseWriter, req *http.Request) {
 		// http.Redirect(res, req, "/index", http.StatusSeeOther)
 		return
 	}
-	// body2, _ := ioutil.ReadAll(resp2.Body)
-
+	// Close session
+	req3, err := http.NewRequest("DELETE", session, nil)
+	req3.Header.Set("X-Auth-Token", token)
+	resp3, err3 := client2.Do(req3)
+	if err3 != nil {
+		panic(err3)
+	}
+	defer resp3.Body.Close()
+	defer client2.Do(req3)
 }
 
 func Help(res http.ResponseWriter, req *http.Request) {
@@ -990,40 +1069,12 @@ func Help(res http.ResponseWriter, req *http.Request) {
 func Debug(res http.ResponseWriter, req *http.Request) {
 	// 	// My debug
 
-	// 	var jsonStr2 = []byte(`{
-	//    "UserName":"",
-	//    "Password":"",
-	//    "Oem":{
-	//       "Hp":{
-	//          "Privileges":{
-	//             "RemoteConsolePriv":true,
-	//             "VirtualMediaPriv":true,
-	//             "UserConfigPriv":true,
-	//             "iLOConfigPriv":true,
-	//             "VirtualPowerAndResetPriv":true
-	//          },
-	//          "LoginName":""
-	//       }
-	//    }
-	// }`)
-
-	// 	fmt.Println("json", string(jsonStr2))
-
-	// 	sheetData, _ := ioutil.ReadFile("../credential-ilo.json")
-	// 	myaccount := AccountILO{}
-	// 	err3 := json.Unmarshal(sheetData, &myaccount)
-	// 	if err3 != nil {
-	// 		fmt.Println("Error: ", err3)
-	// 	}
-
-	// 	fmt.Println("newJson", myaccount)
-
 	// Mydebu end
 
-	url := "https://xxxx/redfish/v1/SessionService/Sessions/"
+	url := "https://10.67.224.5/redfish/v1/SessionService/Sessions/"
 	fmt.Println("URL:>", url)
 
-	var jsonStr = []byte(`{"UserName":"","Password":""}`)
+	var jsonStr = []byte(`{"UserName":"openstack","Password":"Airbus2K16"}`)
 	fmt.Println("Body:>", jsonStr)
 
 	// Disable self certificate check
@@ -1054,7 +1105,7 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	session := resp.Header.Get("location")
 
 	// New Session
-	url2 := "https://xxxxxx/redfish/v1/Systems/1/NetworkAdapters"
+	url2 := "https://10.67.224.5/redfish/v1/Systems/1/NetworkAdapters"
 	req2, err := http.NewRequest("GET", url2, nil)
 	req2.Header.Set("X-Auth-Token", token)
 	fmt.Println("URL:>", url2)
@@ -1136,28 +1187,12 @@ func AddUser(token string, hostname string) error {
 	fmt.Println("------> Launch API Add User")
 	// Launch API adding user
 
-	url := "https://" + hostname + "/redfish/v1/AccountService/Accounts"
+	url := "https://" + hostname + "/redfish/v1/AccountService/Accounts/"
 
-	var jsonStr = []byte(`{
-	"UserName": "",
-	"Password": "",
-	"Oem": {
-			"Hp": {
-				"Privileges": {
-					"RemoteConsolePriv": true,
-					"VirtualMediaPriv": true,
-					"UserConfigPriv": true,
-					"iLOConfigPriv": true,
-					"VirtualPowerAndResetPriv": true
-				},
-				"LoginName": ""
-			}
-		}
-	}`)
+	// Read from file
+	sheetData, err := ioutil.ReadFile("../credential-ilo-airbus.json")
 
-	fmt.Println("json", jsonStr)
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(sheetData))
 	if err != nil {
 		fmt.Println("Error API")
 	}
@@ -1175,5 +1210,5 @@ func AddUser(token string, hostname string) error {
 		return err2
 	}
 	// body9, _ := ioutil.ReadAll(resp.Body)
-	return err2
+	return nil
 }
