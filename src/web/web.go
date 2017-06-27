@@ -63,6 +63,7 @@ type InventoryServer struct {
 type InventoryMac struct {
 	CardName string   `json:"CardName"`
 	Mac      []string `json:"Mac"`
+	Position []string `json:"Position"`
 }
 
 // Structure to create an account
@@ -1067,14 +1068,13 @@ func Help(res http.ResponseWriter, req *http.Request) {
 }
 
 func Debug(res http.ResponseWriter, req *http.Request) {
-	// 	// My debug
 
-	// Mydebu end
+	url := "https://xxx/redfish/v1/SessionService/Sessions/"
+	// fmt.Println("URL:>", url)
 
-	url := "https://10.67.224.5/redfish/v1/SessionService/Sessions/"
-	fmt.Println("URL:>", url)
+	var Ethernet []InventoryMac
 
-	var jsonStr = []byte(`{"UserName":"openstack","Password":"Airbus2K16"}`)
+	var jsonStr = []byte(`{"UserName":"x","Password":"x"}`)
 	fmt.Println("Body:>", jsonStr)
 
 	// Disable self certificate check
@@ -1105,10 +1105,10 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	session := resp.Header.Get("location")
 
 	// New Session
-	url2 := "https://10.67.224.5/redfish/v1/Systems/1/NetworkAdapters"
+	url2 := "https://xxx/redfish/v1/Systems/1/NetworkAdapters"
 	req2, err := http.NewRequest("GET", url2, nil)
 	req2.Header.Set("X-Auth-Token", token)
-	fmt.Println("URL:>", url2)
+	// fmt.Println("URL:>", url2)
 	client2 := &http.Client{Transport: tr}
 	resp2, err2 := client2.Do(req2)
 	if err2 != nil {
@@ -1128,7 +1128,7 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	}
 
 	// Go to definition needed. Don t use .(string) assertion at the end
-	fmt.Println("f:", f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[1].(map[string]interface{})["href"])
+	// fmt.Println("f:", f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[1].(map[string]interface{})["href"])
 
 	// Store Value of links/Member
 	l := f.(map[string]interface{})["links"].(map[string]interface{})["Member"]
@@ -1139,8 +1139,67 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 
 	// Range over all Member value
 	for i := 0; i < s.Len(); i++ {
-		fmt.Println("loop:", f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[i].(map[string]interface{})["href"])
+		// fmt.Println("loop:", f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[i].(map[string]interface{})["href"])
+		// urlend := reflect.ValueOf(f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[i].(map[string]interface{})["href"])
+		urlstring := reflect.ValueOf(f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[i].(map[string]interface{})["href"]).String()
+
+		// fmt.Println("ValueOf>", urlstring)
+		url3 := "https://10.67.224.5" + urlstring
+		req3, err3 := http.NewRequest("GET", url3, nil)
+		if err3 != nil {
+			panic(err3)
+		}
+		req3.Header.Set("X-Auth-Token", token)
+		fmt.Println("URL:>", url3)
+		client2 := &http.Client{Transport: tr}
+		resp3, err4 := client2.Do(req3)
+		if err4 != nil {
+			panic(err4)
+		}
+		defer resp3.Body.Close()
+		body3, _ := ioutil.ReadAll(resp3.Body)
+		// fmt.Println("body3>>", string(body3))
+
+		var g interface{}
+
+		erro2 := json.Unmarshal([]byte(body3), &g)
+		if erro2 != nil {
+			fmt.Println("Error: ", erro2)
+			panic(erro2)
+		}
+
+		fmt.Println("Name Card:", g.(map[string]interface{})["Name"])
+
+		// Ethernet[i].CardName = reflect.ValueOf(g.(map[string]interface{})["Name"]).String()
+
+		Ethernet = append(Ethernet, InventoryMac{
+
+			CardName: reflect.ValueOf(g.(map[string]interface{})["Name"]).String(),
+		})
+
+		nbrports := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"])
+
+		for i := 0; i < nbrports.Len(); i++ {
+
+			toto := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["MacAddress"]).String()
+			fmt.Println("toto>", toto)
+			// fmt.Println("Mac Address:", g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["MacAddress"])
+			titi := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["Oem"].(map[string]interface{})["Hp"].(map[string]interface{})["StructuredName"]).String()
+			// fmt.Println("Position:", g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["Oem"].(map[string]interface{})["Hp"].(map[string]interface{})["StructuredName"])
+			fmt.Println("titi>", titi)
+
+			// Ethernet.Mac[i] = toto
+		}
+
 	}
+
+	// type InventoryMac struct {
+	// 	CardName string   `json:"CardName"`
+	// 	Mac      []string `json:"Mac"`
+	// 	Position []string `json:"Position"`
+	// }
+
+	fmt.Println("Ethernet>", Ethernet)
 
 	// Close session
 	req3, err := http.NewRequest("DELETE", session, nil)
@@ -1210,5 +1269,10 @@ func AddUser(token string, hostname string) error {
 		return err2
 	}
 	// body9, _ := ioutil.ReadAll(resp.Body)
+	return nil
+}
+
+func RetrieveMacAddress(token string, hostname string) error {
+	fmt.Println("------> Launch API MAC Address")
 	return nil
 }
