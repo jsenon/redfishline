@@ -1172,23 +1172,20 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 
 		// Ethernet[i].CardName = reflect.ValueOf(g.(map[string]interface{})["Name"]).String()
 
-		Ethernet = append(Ethernet, InventoryMac{
-
-			CardName: reflect.ValueOf(g.(map[string]interface{})["Name"]).String(),
-		})
+		Ethernet = append(Ethernet, InventoryMac{CardName: reflect.ValueOf(g.(map[string]interface{})["Name"]).String()})
 
 		nbrports := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"])
 
-		for i := 0; i < nbrports.Len(); i++ {
+		for j := 0; j < nbrports.Len(); j++ {
 
-			toto := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["MacAddress"]).String()
+			toto := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[j].(map[string]interface{})["MacAddress"]).String()
 			fmt.Println("toto>", toto)
-			// fmt.Println("Mac Address:", g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["MacAddress"])
-			titi := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["Oem"].(map[string]interface{})["Hp"].(map[string]interface{})["StructuredName"]).String()
-			// fmt.Println("Position:", g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["Oem"].(map[string]interface{})["Hp"].(map[string]interface{})["StructuredName"])
+			// fmt.Println("Mac Address:", g.(map[string]interface{})["PhysicalPorts"].([]interface{})[j].(map[string]interface{})["MacAddress"])
+			titi := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[j].(map[string]interface{})["Oem"].(map[string]interface{})["Hp"].(map[string]interface{})["StructuredName"]).String()
+			// fmt.Println("Position:", g.(map[string]interface{})["PhysicalPorts"].([]interface{})[j].(map[string]interface{})["Oem"].(map[string]interface{})["Hp"].(map[string]interface{})["StructuredName"])
 			fmt.Println("titi>", titi)
 
-			// Ethernet.Mac[i] = toto
+			// Ethernet.Mac[j] = toto
 		}
 
 	}
@@ -1272,7 +1269,34 @@ func AddUser(token string, hostname string) error {
 	return nil
 }
 
-func RetrieveMacAddress(token string, hostname string) error {
+func RetrieveMacAddress(token string, hostname string) ([]InventoryMac, error) {
 	fmt.Println("------> Launch API MAC Address")
-	return nil
+
+	var EthernetBis []InventoryMac
+	EthernetBis = make([]InventoryMac, 0, 10)
+	var mytext string
+
+	// Loop over Nbr of Card
+	for j := 0; j < 2; j++ {
+
+		// Just for testing, Have different text
+		if j == 0 {
+			mytext = "mytestexemple0"
+		} else {
+			mytext = "mytestexemple1"
+		}
+		fmt.Println(mytext)
+		EthernetBis = append(EthernetBis, InventoryMac{CardName: mytext})
+
+		// Loop Over Nbre of Port in that Card
+		for i := 0; i < 8; i++ {
+			EthernetBis[j].Mac = append(EthernetBis[j].Mac, "abcd")
+			EthernetBis[j].Position = append(EthernetBis[j].Position, "12c")
+		}
+	}
+
+	fmt.Printf("%v\n", EthernetBis)
+	fmt.Println("len:", len(EthernetBis))
+
+	return EthernetBis, nil
 }
