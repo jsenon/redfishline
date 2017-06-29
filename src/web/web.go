@@ -811,6 +811,8 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 		}
 		body10, _ := ioutil.ReadAll(resp3.Body)
 
+		// Retrieve Name Server ILO
+
 		url4 := "https://" + ILOHostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
 		req4, err4 := http.NewRequest("GET", url4, nil)
 		client4 := &http.Client{Transport: tr}
@@ -832,6 +834,13 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 		// HTML Rendering
 
 		// tempmem := data["Memory"]["TotalSystemMemoryGB"].(float64)
+
+		var Ethernet []InventoryMac
+
+		Ethernet, err5 := RetrieveMacAddress(token, ILOHostname)
+
+		fmt.Println("err5", err5)
+		fmt.Println("Ethernet", Ethernet)
 
 		myinventory = append(myinventory, InventoryServer{
 
@@ -1069,12 +1078,13 @@ func Help(res http.ResponseWriter, req *http.Request) {
 
 func Debug(res http.ResponseWriter, req *http.Request) {
 
-	url := "https://xxx/redfish/v1/SessionService/Sessions/"
+	url := "https:///redfish/v1/SessionService/Sessions/"
 	// fmt.Println("URL:>", url)
 
-	var Ethernet []InventoryMac
+	var EthernetBis []InventoryMac
+	EthernetBis = make([]InventoryMac, 0, 10)
 
-	var jsonStr = []byte(`{"UserName":"x","Password":"x"}`)
+	var jsonStr = []byte(`{"UserName":"","Password":""}`)
 	fmt.Println("Body:>", jsonStr)
 
 	// Disable self certificate check
@@ -1105,7 +1115,7 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	session := resp.Header.Get("location")
 
 	// New Session
-	url2 := "https://xxx/redfish/v1/Systems/1/NetworkAdapters"
+	url2 := "https:///redfish/v1/Systems/1/NetworkAdapters"
 	req2, err := http.NewRequest("GET", url2, nil)
 	req2.Header.Set("X-Auth-Token", token)
 	// fmt.Println("URL:>", url2)
@@ -1138,13 +1148,12 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	s := reflect.ValueOf(l)
 
 	// Range over all Member value
-	for i := 0; i < s.Len(); i++ {
-		// fmt.Println("loop:", f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[i].(map[string]interface{})["href"])
-		// urlend := reflect.ValueOf(f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[i].(map[string]interface{})["href"])
-		urlstring := reflect.ValueOf(f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[i].(map[string]interface{})["href"]).String()
+	// Loop over Nbr of Card
 
-		// fmt.Println("ValueOf>", urlstring)
-		url3 := "https://10.67.224.5" + urlstring
+	for j := 0; j < s.Len(); j++ {
+		urlstring := reflect.ValueOf(f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[j].(map[string]interface{})["href"]).String()
+
+		url3 := "https://" + urlstring
 		req3, err3 := http.NewRequest("GET", url3, nil)
 		if err3 != nil {
 			panic(err3)
@@ -1158,7 +1167,6 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 		}
 		defer resp3.Body.Close()
 		body3, _ := ioutil.ReadAll(resp3.Body)
-		// fmt.Println("body3>>", string(body3))
 
 		var g interface{}
 
@@ -1170,23 +1178,24 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 
 		fmt.Println("Name Card:", g.(map[string]interface{})["Name"])
 
-		// Ethernet[i].CardName = reflect.ValueOf(g.(map[string]interface{})["Name"]).String()
-
-		Ethernet = append(Ethernet, InventoryMac{CardName: reflect.ValueOf(g.(map[string]interface{})["Name"]).String()})
+		EthernetBis = append(EthernetBis, InventoryMac{CardName: reflect.ValueOf(g.(map[string]interface{})["Name"]).String()})
 
 		nbrports := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"])
 
-		for j := 0; j < nbrports.Len(); j++ {
+		// Loop Over Nbre of Port in that Card
 
-			toto := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[j].(map[string]interface{})["MacAddress"]).String()
+		for i := 0; i < nbrports.Len(); i++ {
+
+			toto := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["MacAddress"]).String()
 			fmt.Println("toto>", toto)
-			// fmt.Println("Mac Address:", g.(map[string]interface{})["PhysicalPorts"].([]interface{})[j].(map[string]interface{})["MacAddress"])
-			titi := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[j].(map[string]interface{})["Oem"].(map[string]interface{})["Hp"].(map[string]interface{})["StructuredName"]).String()
-			// fmt.Println("Position:", g.(map[string]interface{})["PhysicalPorts"].([]interface{})[j].(map[string]interface{})["Oem"].(map[string]interface{})["Hp"].(map[string]interface{})["StructuredName"])
-			fmt.Println("titi>", titi)
+			EthernetBis[j].Mac = append(EthernetBis[j].Mac, toto)
 
-			// Ethernet.Mac[j] = toto
+			titi := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["Oem"].(map[string]interface{})["Hp"].(map[string]interface{})["StructuredName"]).String()
+			fmt.Println("titi>", titi)
+			EthernetBis[j].Position = append(EthernetBis[j].Position, titi)
+
 		}
+		fmt.Println("Slice", EthernetBis)
 
 	}
 
@@ -1196,7 +1205,7 @@ func Debug(res http.ResponseWriter, req *http.Request) {
 	// 	Position []string `json:"Position"`
 	// }
 
-	fmt.Println("Ethernet>", Ethernet)
+	fmt.Println("Ethernet>", EthernetBis)
 
 	// Close session
 	req3, err := http.NewRequest("DELETE", session, nil)
@@ -1274,29 +1283,95 @@ func RetrieveMacAddress(token string, hostname string) ([]InventoryMac, error) {
 
 	var EthernetBis []InventoryMac
 	EthernetBis = make([]InventoryMac, 0, 10)
-	var mytext string
 
-	// Loop over Nbr of Card
-	for j := 0; j < 2; j++ {
+	url2 := "https://" + hostname + "/redfish/v1/Systems/1/NetworkAdapters"
+	req2, _ := http.NewRequest("GET", url2, nil)
+	req2.Header.Set("X-Auth-Token", token)
+	// fmt.Println("URL:>", url2)
+	// Disable self certificate check
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client2 := &http.Client{Transport: tr}
+	resp2, err2 := client2.Do(req2)
+	if err2 != nil {
+		panic(err2)
+	}
+	defer resp2.Body.Close()
+	body2, _ := ioutil.ReadAll(resp2.Body)
 
-		// Just for testing, Have different text
-		if j == 0 {
-			mytext = "mytestexemple0"
-		} else {
-			mytext = "mytestexemple1"
-		}
-		fmt.Println(mytext)
-		EthernetBis = append(EthernetBis, InventoryMac{CardName: mytext})
+	// Create Interface for parsing
+	var f interface{}
 
-		// Loop Over Nbre of Port in that Card
-		for i := 0; i < 8; i++ {
-			EthernetBis[j].Mac = append(EthernetBis[j].Mac, "abcd")
-			EthernetBis[j].Position = append(EthernetBis[j].Position, "12c")
-		}
+	// Unmarshal json with interface
+	erro2 := json.Unmarshal([]byte(body2), &f)
+	if erro2 != nil {
+		fmt.Println("Error: ", erro2)
+		panic(erro2)
 	}
 
-	fmt.Printf("%v\n", EthernetBis)
-	fmt.Println("len:", len(EthernetBis))
+	// Go to definition needed. Don t use .(string) assertion at the end
+	// fmt.Println("f:", f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[1].(map[string]interface{})["href"])
+
+	// Store Value of links/Member
+	l := f.(map[string]interface{})["links"].(map[string]interface{})["Member"]
+
+	// Use reflect to store value of interface
+	// ValueOf returns a new Value initialized to the concrete value stored in the interface l
+	s := reflect.ValueOf(l)
+
+	// Range over all Member value
+	// Loop over Nbr of Card
+
+	for j := 0; j < s.Len(); j++ {
+		urlstring := reflect.ValueOf(f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[j].(map[string]interface{})["href"]).String()
+
+		url3 := "https://10.67.224.23" + urlstring
+		req3, err3 := http.NewRequest("GET", url3, nil)
+		if err3 != nil {
+			panic(err3)
+		}
+		req3.Header.Set("X-Auth-Token", token)
+		fmt.Println("URL:>", url3)
+		client2 := &http.Client{Transport: tr}
+		resp3, err4 := client2.Do(req3)
+		if err4 != nil {
+			panic(err4)
+		}
+		defer resp3.Body.Close()
+		body3, _ := ioutil.ReadAll(resp3.Body)
+
+		var g interface{}
+
+		erro2 := json.Unmarshal([]byte(body3), &g)
+		if erro2 != nil {
+			fmt.Println("Error: ", erro2)
+			panic(erro2)
+		}
+
+		fmt.Println("Name Card:", g.(map[string]interface{})["Name"])
+
+		EthernetBis = append(EthernetBis, InventoryMac{CardName: reflect.ValueOf(g.(map[string]interface{})["Name"]).String()})
+
+		nbrports := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"])
+
+		// Loop Over Nbre of Port in that Card
+
+		for i := 0; i < nbrports.Len(); i++ {
+
+			toto := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["MacAddress"]).String()
+			fmt.Println("toto>", toto)
+			EthernetBis[j].Mac = append(EthernetBis[j].Mac, toto)
+
+			titi := reflect.ValueOf(g.(map[string]interface{})["PhysicalPorts"].([]interface{})[i].(map[string]interface{})["Oem"].(map[string]interface{})["Hp"].(map[string]interface{})["StructuredName"]).String()
+			fmt.Println("titi>", titi)
+			EthernetBis[j].Position = append(EthernetBis[j].Position, titi)
+
+		}
+
+	}
+
+	fmt.Println("Ethernet>", EthernetBis)
 
 	return EthernetBis, nil
 }
