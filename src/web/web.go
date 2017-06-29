@@ -853,6 +853,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 			Health:       data["Status"]["Health"].(string),
 			Power:        data3["PowerRegulator"].(string),
 			PowerState:   data2["PowerState"].(string),
+			MacInfo:      Ethernet,
 		})
 
 		req.ParseForm()

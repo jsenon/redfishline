@@ -15,9 +15,16 @@
     Health: {{.Health}}
     <br />
     Power Setting: {{.Power}}
-    <!-- <br />
-    Mac Address: -->
     <br /> 
+    {{range .MacInfo}}
+    Card Name: {{.CardName}} <br />
+        {{range .Mac}}
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mac Address {{.}} <br />
+        {{end}}
+        {{range .Position}}
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Position {{.}}<br />
+        {{end}}
+    {{end}}
     Power State: {{.PowerState}}
     <br />
 </div>
