@@ -597,6 +597,8 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 	var data4 map[string][]map[string]interface{}
 
 	myinventory := []InventoryServer{}
+	var Ethernet []InventoryMac
+	var EthernetSingle []InventoryMac
 
 	req.ParseForm()
 
@@ -720,8 +722,6 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 
 			// tempmem := data["Memory"]["TotalSystemMemoryGB"].(float64)
 
-			var Ethernet []InventoryMac
-
 			Ethernet, err5 := RetrieveMacAddress(token, ILOHostname)
 
 			fmt.Println("err5", err5)
@@ -843,9 +843,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 
 		// tempmem := data["Memory"]["TotalSystemMemoryGB"].(float64)
 
-		var Ethernet []InventoryMac
-
-		Ethernet, err5 := RetrieveMacAddress(token, ILOHostname)
+		EthernetSingle, err5 := RetrieveMacAddress(token, ILOHostname)
 
 		fmt.Println("err5", err5)
 		fmt.Println("Ethernet", Ethernet)
@@ -861,7 +859,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 			Health:       data["Status"]["Health"].(string),
 			Power:        data3["PowerRegulator"].(string),
 			PowerState:   data2["PowerState"].(string),
-			MacInfo:      Ethernet,
+			MacInfo:      EthernetSingle,
 		})
 
 		req.ParseForm()
