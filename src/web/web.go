@@ -846,7 +846,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 		EthernetSingle, err5 := RetrieveMacAddress(token, ILOHostname)
 
 		fmt.Println("err5", err5)
-		fmt.Println("Ethernet", Ethernet)
+		fmt.Println("EthernetSingle", EthernetSingle)
 
 		myinventory = append(myinventory, InventoryServer{
 
