@@ -720,6 +720,13 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 
 			// tempmem := data["Memory"]["TotalSystemMemoryGB"].(float64)
 
+			var Ethernet []InventoryMac
+
+			Ethernet, err5 := RetrieveMacAddress(token, ILOHostname)
+
+			fmt.Println("err5", err5)
+			fmt.Println("Ethernet", Ethernet)
+
 			myinventory = append(myinventory, InventoryServer{
 
 				Hostname:     data4["Items"][0]["FQDN"].(string),
@@ -731,6 +738,7 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 				Health:       data["Status"]["Health"].(string),
 				Power:        data3["PowerRegulator"].(string),
 				PowerState:   data2["PowerState"].(string),
+				MacInfo:      Ethernet,
 			})
 			// Close session
 			req5, err := http.NewRequest("DELETE", session, nil)
