@@ -48,7 +48,7 @@ Massive ILO Tab Table View
 - [x] Add API monitoring
 - [x] Power Action
 - [x] Massive Inventory Retrieval
-- [ ] Inventory MacAdress
+- [x] Inventory MacAdress
 - [x] Power State
 - [ ] Raid Configuration
 - [ ] Integration with cloudtab project
