@@ -721,8 +721,9 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 			// HTML Rendering
 
 			// tempmem := data["Memory"]["TotalSystemMemoryGB"].(float64)
+			var err5 error
 
-			Ethernet, err5 := RetrieveMacAddress(token, ILOHostname)
+			Ethernet, err5 = RetrieveMacAddress(token, s[i].ILOHostname)
 
 			fmt.Println("err5", err5)
 			fmt.Println("Ethernet", Ethernet)
@@ -843,7 +844,9 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 
 		// tempmem := data["Memory"]["TotalSystemMemoryGB"].(float64)
 
-		EthernetSingle, err5 := RetrieveMacAddress(token, ILOHostname)
+		var err5 error
+
+		EthernetSingle, err5 = RetrieveMacAddress(token, ILOHostname)
 
 		fmt.Println("err5", err5)
 		fmt.Println("EthernetSingle", EthernetSingle)
@@ -1288,6 +1291,8 @@ func AddUser(token string, hostname string) error {
 func RetrieveMacAddress(token string, hostname string) ([]InventoryMac, error) {
 	fmt.Println("------> Launch API MAC Address")
 
+	fmt.Println("Hostname", hostname)
+
 	var EthernetBis []InventoryMac
 	EthernetBis = make([]InventoryMac, 0, 10)
 
@@ -1333,7 +1338,7 @@ func RetrieveMacAddress(token string, hostname string) ([]InventoryMac, error) {
 	for j := 0; j < s.Len(); j++ {
 		urlstring := reflect.ValueOf(f.(map[string]interface{})["links"].(map[string]interface{})["Member"].([]interface{})[j].(map[string]interface{})["href"]).String()
 
-		url3 := "https://10.67.224.23" + urlstring
+		url3 := "https://" + hostname + urlstring
 		req3, err3 := http.NewRequest("GET", url3, nil)
 		if err3 != nil {
 			panic(err3)
