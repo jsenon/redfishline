@@ -606,7 +606,10 @@ func Inventory(res http.ResponseWriter, req *http.Request) {
 	Username := req.FormValue("Username")
 	Password := req.FormValue("Password")
 	JSON := req.FormValue("JSON")
+
 	fmt.Println("JSON>", JSON)
+	mytype := req.FormValue("myType")
+	fmt.Println("type", mytype)
 
 	// Error if JSON not exist and Hostname provided
 	if JSON == "" && ILOHostname == "" {
