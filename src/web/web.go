@@ -1293,13 +1293,15 @@ func RetrieveMacAddress(token string, hostname string) ([]InventoryMac, error) {
 
 	fmt.Println("Hostname", hostname)
 
+	fmt.Println("Hostname", token)
+
 	var EthernetBis []InventoryMac
 	EthernetBis = make([]InventoryMac, 0, 10)
 
 	url2 := "https://" + hostname + "/redfish/v1/Systems/1/NetworkAdapters"
 	req2, _ := http.NewRequest("GET", url2, nil)
 	req2.Header.Set("X-Auth-Token", token)
-	// fmt.Println("URL:>", url2)
+	fmt.Println("URL:>", url2)
 	// Disable self certificate check
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -1318,7 +1320,7 @@ func RetrieveMacAddress(token string, hostname string) ([]InventoryMac, error) {
 	// Unmarshal json with interface
 	erro2 := json.Unmarshal([]byte(body2), &f)
 	if erro2 != nil {
-		fmt.Println("Error: ", erro2)
+		fmt.Println("Error Unmarshall interface: ", erro2)
 		panic(erro2)
 	}
 
