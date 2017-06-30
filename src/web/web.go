@@ -1314,6 +1314,8 @@ func RetrieveMacAddress(token string, hostname string) ([]InventoryMac, error) {
 	defer resp2.Body.Close()
 	body2, _ := ioutil.ReadAll(resp2.Body)
 
+	fmt.Println("Body interface Network Adapter", byte(body2))
+
 	// Create Interface for parsing
 	var f interface{}
 
