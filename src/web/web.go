@@ -1301,7 +1301,7 @@ func RetrieveMacAddress(token string, hostname string) ([]InventoryMac, error) {
 	url2 := "https://" + hostname + "/redfish/v1/Systems/1/NetworkAdapters"
 	req2, err := http.NewRequest("GET", url2, nil)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(err2)
 	}
 
 	req2.Header.Set("X-Auth-Token", token)
