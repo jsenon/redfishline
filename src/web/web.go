@@ -1293,13 +1293,17 @@ func RetrieveMacAddress(token string, hostname string) ([]InventoryMac, error) {
 
 	fmt.Println("Hostname", hostname)
 
-	fmt.Println("Hostname", token)
+	fmt.Println("token", token)
 
 	var EthernetBis []InventoryMac
 	EthernetBis = make([]InventoryMac, 0, 10)
 
 	url2 := "https://" + hostname + "/redfish/v1/Systems/1/NetworkAdapters"
-	req2, _ := http.NewRequest("GET", url2, nil)
+	req2, err := http.NewRequest("GET", url2, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	req2.Header.Set("X-Auth-Token", token)
 	fmt.Println("URL:>", url2)
 	// Disable self certificate check
